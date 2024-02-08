@@ -55,10 +55,14 @@ workflows:
   build:
     jobs:
       - setup
-      - build
+      - build:
+          requires:
+            - setup
   deploy:
     when:
       and:
         - equal: [ master, <<pipeline.git.branch>> ]
     jobs:
-      - buildImageAndDeploy
+      - buildImageAndDeploy:
+          requires:
+            - build
