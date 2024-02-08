@@ -43,7 +43,7 @@ jobs:
     steps:
       - run:
           name: Build Docker Image
-          command: docker build -t <<dockerImageName>>:<<dockerImageVersion>> .
+          command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
       - run:
           name: Login
           command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
