@@ -8,8 +8,19 @@
 #      - maven/install
 
 version: 2.1
+
+parameters:
+  dockerImageName:
+    description: name of the docker image
+    type: string
+    default: pvgourmet/pura-vida-gourmet
+  dockerImageVersion:
+    description: version of the docker image
+    type: string
+    default: 1.1
+
 jobs:
-  build:
+  setup:
     working_directory: ~/project
     docker:
       - image: cimg/openjdk:17.0.10
@@ -17,15 +28,37 @@ jobs:
       - setup_remote_docker:
           docker_layer_caching: true
       - checkout
+  build:
+    working_directory: ~/project
+    docker:
+      - image: cimg/openjdk:17.0.10
+    steps:
       - run:
           name: Maven Clean Install
           command: mvn clean install
+  buildImageAndDeploy:
+    working_directory: ~/project
+    docker:
+      - image: cimg/openjdk:17.0.10
+    steps:
       - run:
           name: Build Docker Image
-          command: docker build -t pvgourmet/pura-vida-gourmet:1.1 .
+          command: docker build -t <<dockerImageName>>:<<dockerImageVersion>> .
       - run:
           name: Login
           command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
       - run:
           name: Push Image
           command: docker push pvgourmet/pura-vida-gourmet:1.1
+
+workflows:
+  build:
+    jobs:
+      - setup
+      - build
+  deploy:
+    when:
+      and:
+        - equal: [ master, <<pipeline.git.branch>> ]
+    jobs:
+      - buildImageAndDeploy
