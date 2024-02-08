@@ -27,12 +27,12 @@ jobs:
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
-      - checkout
   build:
     working_directory: ~/project
     docker:
       - image: cimg/openjdk:17.0.10
     steps:
+      - checkout
       - run:
           name: Maven Clean Install
           command: mvn clean install
