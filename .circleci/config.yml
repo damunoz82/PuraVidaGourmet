@@ -22,10 +22,10 @@ jobs:
           command: mvn clean install
       - run:
           name: Build Docker Image
-          command: docker build -t pvgourmet/pura-vida-gourment:1.1 .
+          command: docker build -t pvgourmet/pura-vida-gourmet:1.1 .
       - run:
           name: Login
           command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
       - run:
           name: Push Image
-          command: docker push pvgourmet/pura-vida-gourment
+          command: docker push pvgourmet/pura-vida-gourmet:1.1
