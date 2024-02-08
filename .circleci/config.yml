@@ -12,7 +12,7 @@ jobs:
   build:
     working_directory: ~/project
     docker:
-      - image: eclipse-temurin:17-jde-alpine
+      - image: cimg/openjdk:21.0.2
     steps:
       - checkout
       - run: mvn clean install
