@@ -16,3 +16,6 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install
+      - run:
+          name: Build Docker Image
+          command: docker build -t pura-vida-gourment:1.1 .
