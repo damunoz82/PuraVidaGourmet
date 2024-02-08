@@ -16,18 +16,3 @@ jobs:
     steps:
       - checkout
       - run: mvn clean install
-          #      - run:
-          #          name: Build Docker Image
-          #          command: |
-          #            docker build \
-          #              --tag pura-vida-gourmet:latest 
-          .
-#      - run:
-#          name: Login to Docker Registry
-#          command: |
-#            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-#      - run:
-#          name: Push Docker Image
-#          command: |
-#            docker tag my-image:latest my-registry/my-image:latest
-#            docker push my-registry/my-image:latest
