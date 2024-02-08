@@ -14,8 +14,18 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0.10
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - checkout
-      - run: mvn clean install
+      - run:
+          name: Maven Clean Install
+          command: mvn clean install
       - run:
           name: Build Docker Image
           command: docker build -t pvgourmet/pura-vida-gourment:1.1 .
+      - run:
+          name: Login
+          command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+      - run:
+          name: Push Image
+          command: docker push pvgourmet/pura-vida-gourment
