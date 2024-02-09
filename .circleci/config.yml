@@ -41,15 +41,20 @@ jobs:
     docker:
       - image: cimg/openjdk:17.0.10
     steps:
-      - run:
-          name: Build Docker Image
-          command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
-      - run:
-          name: Login
-          command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-      - run:
-          name: Push Image
-          command: docker push pvgourmet/pura-vida-gourmet:1.1
+      - when:
+          condition:
+            equal: [ master, <<pipeline.git.branch>> ]
+          steps:
+            - run:
+                name: Build Docker Image
+                command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
+            - run:
+                name: Login
+                command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+            - run:
+                name: Push Image
+                command: docker push pvgourmet/<<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
+      - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
   build:
@@ -58,11 +63,6 @@ workflows:
       - build:
           requires:
             - setup
-  deploy:
-    when:
-      and:
-        - equal: [ master, <<pipeline.git.branch>> ]
-    jobs:
       - buildImageAndDeploy:
           requires:
             - build
