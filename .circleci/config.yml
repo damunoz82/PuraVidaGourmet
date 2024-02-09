@@ -59,11 +59,8 @@ jobs:
       - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
-  setup:
+  build:
     jobs:
-      #      - setup
-      - setup_remote_docker:
-          docker_layer_caching: true
       - build
       - buildImageAndDeploy:
           requires:
