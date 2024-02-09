@@ -71,7 +71,7 @@ workflows:
       - setup
       - build:
           requires:
-            - build
+            - setup
       - buildImageAndDeploy:
           requires:
             - setup
