@@ -20,13 +20,13 @@ parameters:
     default: "1.1"
 
 jobs:
-  setup:
-    working_directory: ~/project
-    docker:
-      - image: cimg/openjdk:17.0.10
-    steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
+  #  setup:
+  #    working_directory: ~/project
+  #    docker:
+  #      - image: cimg/openjdk:17.0.10
+  #    steps:
+  #      - setup_remote_docker:
+  #          docker_layer_caching: true
   build:
     working_directory: ~/project
     docker:
@@ -45,6 +45,8 @@ jobs:
           condition:
             equal: [ master, <<pipeline.git.branch>> ]
           steps:
+            - setup_remote_docker:
+                docker_layer_caching: true
             - run:
                 name: Build Docker Image
                 command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
@@ -59,11 +61,7 @@ jobs:
 workflows:
   build:
     jobs:
-      - setup
-      - build:
-          requires:
-            - setup
+      - build
       - buildImageAndDeploy:
           requires:
-            - setup
             - build
