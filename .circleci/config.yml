@@ -56,13 +56,13 @@ jobs:
                 command: docker push pvgourmet/<<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
       - run: echo "No Docker Image creation or deployment needed."
 
-workflows:
-  build:
-    jobs:
-      - setup
-      - build:
-          requires:
-            - setup
-      - buildImageAndDeploy:
-          requires:
-            - build
+#workflows:
+#  build:
+#    jobs:
+#      - setup
+#      - build:
+#          requires:
+#            - setup
+#      - buildImageAndDeploy:
+#          requires:
+#            - build
