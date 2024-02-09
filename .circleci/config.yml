@@ -59,8 +59,12 @@ jobs:
       - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
-  build:
+  setup:
     jobs:
       - setup
+  build:
+    jobs:
       - build
+  deploy:
+    jobs:
       - buildImageAndDeploy
