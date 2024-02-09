@@ -48,7 +48,7 @@ jobs:
                 command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             - run:
                 name: Push Image
-                command: docker push pvgourmet/<<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
+                command: docker push <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
       - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
