@@ -41,7 +41,7 @@ jobs:
           name: Maven Clean Install
           command: mvn clean install
       - persist_to_workspace:
-          root: /.
+          root: ./.
           paths:
             - .
   buildImageAndDeploy:
@@ -52,8 +52,6 @@ jobs:
           condition:
             equal: [ master, <<pipeline.git.branch>> ]
           steps:
-            - setup_remote_docker:
-                docker_layer_caching: true
             - run:
                 name: Build Docker Image
                 command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
