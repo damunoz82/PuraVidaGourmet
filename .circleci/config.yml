@@ -26,28 +26,16 @@ parameters:
     default: "1.1"
 
 jobs:
-  setup:
+  buildAndDeploy:
     working_directory: ~/project
     executor: build-pod
     steps:
       - setup_remote_docker:
           docker_layer_caching: true
-  build:
-    working_directory: ~/project
-    executor: build-pod
-    steps:
       - checkout
       - run:
           name: Maven Clean Install
           command: mvn clean install
-      - persist_to_workspace:
-          root: ./.
-          paths:
-            - .
-  buildImageAndDeploy:
-    working_directory: ~/project
-    executor: build-pod
-    steps:
       - when:
           condition:
             equal: [ master, <<pipeline.git.branch>> ]
@@ -66,11 +54,4 @@ jobs:
 workflows:
   build:
     jobs:
-      - setup
-      - build:
-          requires:
-            - setup
-      - buildImageAndDeploy:
-          requires:
-            - setup
-            - build
+      - buildAndDeploy
