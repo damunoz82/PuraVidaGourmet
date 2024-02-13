@@ -4,6 +4,7 @@ import static jakarta.servlet.DispatcherType.ERROR;
 import static jakarta.servlet.DispatcherType.FORWARD;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import org.puravidatgourmet.api.config.security.RestAuthenticationEntryPoint;
 import org.puravidatgourmet.api.config.security.TokenAuthenticationFilter;
 import org.puravidatgourmet.api.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.puravidatgourmet.api.config.security.oauth2.OAuth2AuthenticationFailureHandler;
@@ -88,6 +89,7 @@ public class SecurityConfig {
         .cors(AbstractHttpConfigurer::disable)
         //        .formLogin(AbstractHttpConfigurer::disable)
         //        .httpBasic(AbstractHttpConfigurer::disable)
+      .exceptionHandling(e -> e.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
         .authorizeHttpRequests(
             request -> {
               request
