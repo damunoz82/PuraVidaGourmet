@@ -20,10 +20,10 @@ parameters:
     description: Name of the Api image
     type: string
     default: "pvgourmet/pura-vida-gourmet-api"
-    dockerImageNameEngine:
-      description: Name of the Engine image
-      type: string
-      default: "pvgourmet/pura-vida-gourmet-engine"
+  dockerImageNameEngine:
+    description: Name of the Engine image
+    type: string
+    default: "pvgourmet/pura-vida-gourmet-engine"
   dockerImageVersion:
     description: version of the docker image
     type: string
