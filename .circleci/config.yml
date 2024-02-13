@@ -54,8 +54,11 @@ jobs:
                 name: Login
                 command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             - run:
-                name: Push Image
-                command: docker push <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
+                name: Push Api Image
+                command: docker push <<pipeline.parameters.dockerImageNameApi>>:<<pipeline.parameters.dockerImageVersion>>
+            - run:
+                name: Push Engine Image
+                command: docker push <<pipeline.parameters.dockerImageNameEngine>>:<<pipeline.parameters.dockerImageVersion>>
       - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
