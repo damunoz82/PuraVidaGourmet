@@ -34,6 +34,7 @@ public class TokenService {
 
     return Jwts.builder()
         .setSubject(userPrincipal.getUsername()) // here we can add more info if needed.
+//        .setPayload("") // here we can add more info if needed.
         .setIssuedAt(new Date())
         .setExpiration(expiryDate)
         .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())

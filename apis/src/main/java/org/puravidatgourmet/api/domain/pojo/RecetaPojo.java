@@ -50,5 +50,5 @@ public class RecetaPojo {
   private UserPojo usuarioRegistra;
 
   @NotNull(message = "Categoria no puede ser nula")
-  private RecetaCategoriaPojo categoria;
+  private TipoProductoPojo categoria;
 }

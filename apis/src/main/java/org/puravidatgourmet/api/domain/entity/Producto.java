@@ -5,16 +5,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.puravidatgourmet.api.domain.enums.FormatoCompra;
 import org.puravidatgourmet.api.domain.enums.UnidadMedidas;
 
 @Data
@@ -24,8 +27,8 @@ import org.puravidatgourmet.api.domain.enums.UnidadMedidas;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "materiaPrima")
-public class MateriaPrima {
+@Table(name = "producto")
+public class Producto {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,14 +38,20 @@ public class MateriaPrima {
   @Column(unique = true)
   private String nombre;
 
-  @Min(0)
-  private long precioUnitario;
+  @NotEmpty private String proveedor;
 
-  @Min(0)
-  private long cantidadPorUnidad;
+  @ManyToOne private TipoProducto tipoProducto;
 
   @NotNull private UnidadMedidas unidadMedida;
 
   @Min(0)
-  private long cantidadEnBodega;
+  private long precioDeCompra;
+
+  @Min(0)
+  private long cantidadPorUnidad;
+
+  @NotNull private FormatoCompra formatoCompra;
+
+  @Min(0)
+  private float porcentajeMerma;
 }

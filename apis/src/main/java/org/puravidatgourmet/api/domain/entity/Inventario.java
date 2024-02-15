@@ -4,8 +4,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,18 +18,20 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Entity
-@Table(name = "ingrediente")
-public class Ingrediente {
+@Table(name = "inventario")
+public class Inventario {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long ingredienteId;
+  private long id;
 
-  @OneToOne private Producto producto;
+  private long fecha;
 
-  private long cantidad;
+  @ManyToOne private Departamento departamento;
+
+  @OneToMany private List<InventarioRegistro> registros;
 }

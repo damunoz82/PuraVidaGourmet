@@ -1,5 +1,6 @@
 package org.puravidatgourmet.api.domain.pojo;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,10 +15,12 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecetaCategoriaPojo {
+public class DepartamentoPojo {
 
   private long id;
 
-  @NotBlank(message = "Nombre de la categoria no puede estar en blanco.")
+  @NotBlank(message = "Nombre del departamento no puede estar en blanco.")
   private String nombre;
+
+  @Valid private UserPojo responsable;
 }

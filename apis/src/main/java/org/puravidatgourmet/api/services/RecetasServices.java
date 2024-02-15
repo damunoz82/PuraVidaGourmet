@@ -1,10 +1,9 @@
 package org.puravidatgourmet.api.services;
 
-import com.google.common.base.Strings;
 import java.util.List;
 import java.util.Optional;
 import org.puravidatgourmet.api.db.repository.IngredienteRepository;
-import org.puravidatgourmet.api.db.repository.MateriaPrimaRepository;
+import org.puravidatgourmet.api.db.repository.ProductoRepository;
 import org.puravidatgourmet.api.db.repository.RecetaRepository;
 import org.puravidatgourmet.api.domain.entity.Ingrediente;
 import org.puravidatgourmet.api.domain.entity.Receta;
@@ -22,7 +21,7 @@ public class RecetasServices {
 
   @Autowired private IngredienteRepository ingredienteRepository;
 
-  @Autowired private MateriaPrimaRepository materiaPrimaRepository;
+  @Autowired private ProductoRepository productoRepository;
 
   @Transactional
   public Receta saveReceta(Receta receta) {
@@ -37,9 +36,9 @@ public class RecetasServices {
   }
 
   public List<Receta> getAll(String categoria) {
-    if (!Strings.isNullOrEmpty(categoria)) {
-      return recetaRepository.findByCategoriaNombre(categoria);
-    }
+//    if (!Strings.isNullOrEmpty(categoria)) {
+//      return recetaRepository.findByCategoriaNombre(categoria);
+//    }
     return recetaRepository.findAll();
   }
 
@@ -80,7 +79,7 @@ public class RecetasServices {
   private void validateIngredientes(List<IngredientePojo> ingredientes) {
     ingredientes.forEach(
         i -> {
-          materiaPrimaRepository
+          productoRepository
               .findById(i.getMateriaPrima().getId())
               .orElseThrow(
                   () -> new BadRequestException("Ingrediente con materia prima inexistente."));

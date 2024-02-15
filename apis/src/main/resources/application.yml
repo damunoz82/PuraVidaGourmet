@@ -1,5 +1,10 @@
 server:
   port: 8080
+  #  servlet:
+  #    context-path: /api/v1
+  error:
+    include-message: always
+    include-binding-errors: always
 
 logging:
   level:
@@ -53,7 +58,7 @@ spring:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpirationMsec: 864000000
+    tokenExpirationMsec: 360000
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect

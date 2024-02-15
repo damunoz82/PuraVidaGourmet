@@ -6,12 +6,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.puravidatgourmet.api.domain.User;
 
 @Data
 @ToString
@@ -20,14 +22,14 @@ import lombok.ToString;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "ingrediente")
-public class Ingrediente {
+@Table(name = "departamento")
+public class Departamento {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long ingredienteId;
+  private long id;
 
-  @OneToOne private Producto producto;
+  @NotEmpty private String nombre;
 
-  private long cantidad;
+  @OneToOne @NotEmpty private User responsable;
 }

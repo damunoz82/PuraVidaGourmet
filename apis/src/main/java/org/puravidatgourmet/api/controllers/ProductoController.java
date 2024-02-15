@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
-import org.puravidatgourmet.api.domain.entity.MateriaPrima;
-import org.puravidatgourmet.api.domain.pojo.MateriaPrimaPojo;
+import org.puravidatgourmet.api.domain.entity.Producto;
+import org.puravidatgourmet.api.domain.pojo.ProductoPojo;
 import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
-import org.puravidatgourmet.api.mappers.MateriaPrimaMapper;
-import org.puravidatgourmet.api.services.MateriaPrimaService;
+import org.puravidatgourmet.api.mappers.ProductoMapper;
+import org.puravidatgourmet.api.services.ProductoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,20 +27,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(path = "/materia-prima", produces = "application/json")
-public class MateriaPrimaController extends BaseController {
+@RequestMapping(path = "/producto", produces = "application/json")
+public class ProductoController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-  @Autowired private MateriaPrimaService materiaPrimaService;
-  @Autowired private MateriaPrimaMapper mapper;
+  @Autowired private ProductoService productoService;
+  @Autowired private ProductoMapper mapper;
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public List<MateriaPrimaPojo> getAll() {
+  public List<ProductoPojo> getAll() {
     try {
       LOGGER.info("START: getAll");
-      return mapper.toMateriaPrimaPojo(materiaPrimaService.getAllMateriaPrima()).stream()
-          .sorted(Comparator.comparing((MateriaPrimaPojo::getNombre)))
+      return mapper.toProductoPojo(productoService.getAllProducto()).stream()
+          .sorted(Comparator.comparing((ProductoPojo::getNombre)))
           .collect(Collectors.toList());
     } finally {
       LOGGER.info("END: getAll");
@@ -49,11 +49,11 @@ public class MateriaPrimaController extends BaseController {
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public MateriaPrimaPojo get(@PathVariable long id) {
+  public ProductoPojo get(@PathVariable long id) {
     try {
       LOGGER.info("START: get with Id: {}", id);
-      Optional<MateriaPrima> resultado = materiaPrimaService.getMateriaPrima(id);
-      return mapper.toMateriaPrimaPojo(
+      Optional<Producto> resultado = productoService.getProductoById(id);
+      return mapper.toProductoPojo(
           resultado.orElseThrow(() -> new ResourceNotFoundException("Materia prima", "id", id)));
     } finally {
       LOGGER.info("END: get with Id: {}", id);
@@ -62,33 +62,31 @@ public class MateriaPrimaController extends BaseController {
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<String> create(@RequestBody @Valid MateriaPrimaPojo materiaPrima) {
+  public ResponseEntity<String> create(@RequestBody @Valid ProductoPojo producto) {
     try {
-      LOGGER.info("START: create with Materia Prima: {}", materiaPrima);
-      materiaPrimaService.validateSave(materiaPrima);
+      LOGGER.info("START: create with Producto: {}", producto);
+      productoService.validateSave(producto);
 
-      MateriaPrima result =
-          materiaPrimaService.saveMateriaPrima(mapper.toMateriaPrima(materiaPrima));
+      Producto result = productoService.saveProducto(mapper.toProducto(producto));
 
       return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
     } finally {
-      LOGGER.info("END: create with Materia Prima: {}", materiaPrima);
+      LOGGER.info("END: create with Producto: {}", producto);
     }
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<String> update(
-      @PathVariable long id, @RequestBody MateriaPrimaPojo materiaPrima) {
+  public ResponseEntity<String> update(@PathVariable long id, @RequestBody ProductoPojo producto) {
     try {
-      LOGGER.info("START: update with Materia Prima: {}", materiaPrima);
-      materiaPrima.setId(id);
-      materiaPrimaService.validateUpdate(materiaPrima);
-      materiaPrimaService.saveMateriaPrima(mapper.toMateriaPrima(materiaPrima));
+      LOGGER.info("START: update with Producto: {}", producto);
+      producto.setId(id);
+      productoService.validateUpdate(producto);
+      productoService.saveProducto(mapper.toProducto(producto));
       URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
       return ResponseEntity.noContent().location(location).build();
     } finally {
-      LOGGER.info("END: update with Materia Prima: {}", materiaPrima);
+      LOGGER.info("END: update with Producto: {}", producto);
     }
   }
 
@@ -97,8 +95,8 @@ public class MateriaPrimaController extends BaseController {
   public void delete(@PathVariable long id) {
     try {
       LOGGER.info("START: delete with id: {}", id);
-      materiaPrimaService.validateDelete(id);
-      materiaPrimaService.deleteById(id);
+      productoService.validateDelete(id);
+      productoService.deleteById(id);
     } finally {
       LOGGER.info("END: delete with id: {}", id);
     }
