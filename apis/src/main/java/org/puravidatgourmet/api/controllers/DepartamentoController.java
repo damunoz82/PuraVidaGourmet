@@ -82,6 +82,11 @@ public class DepartamentoController extends BaseController {
       LOGGER.info("START: Update with id: {}, and Tipo Producto: {}", id, departamentoPojo);
       departamentoPojo.setId(id);
 
+      // check exists.
+      if (departamentoService.getDepartamento(id).isEmpty()) {
+        throw new ResourceNotFoundException("Departamento", "id", id);
+      }
+
       departamentoService.validateUpdate(departamentoPojo);
 
       departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));

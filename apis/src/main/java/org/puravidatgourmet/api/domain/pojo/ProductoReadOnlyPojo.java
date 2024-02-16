@@ -14,11 +14,13 @@ import lombok.ToString;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MateriaPrimaReadOnlyPojo {
+public class ProductoReadOnlyPojo {
 
   private long id;
 
-  @Size(min = 0, max = 50, message="Nombre de la materia prima debe estar entre 0 y 50 caracteres.")
+  @Size(
+      min = 0,
+      max = 50,
+      message = "Nombre de la materia prima debe estar entre 0 y 50 caracteres.")
   private String nombre;
-
 }

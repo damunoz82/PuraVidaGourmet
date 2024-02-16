@@ -80,6 +80,12 @@ public class TipoProductoController extends BaseController {
       @PathVariable long id, @RequestBody TipoProductoPojo tipoProducto) {
     try {
       LOGGER.info("START: Update with id: {}, and Tipo Producto: {}", id, tipoProducto);
+
+      // check exists.
+      if (tipoProductoService.getTipoProducto(id).isEmpty()) {
+        throw new ResourceNotFoundException("Tipo de Producto", "id", id);
+      }
+
       tipoProducto.setId(id);
 
       tipoProductoService.validateUpdate(tipoProducto);

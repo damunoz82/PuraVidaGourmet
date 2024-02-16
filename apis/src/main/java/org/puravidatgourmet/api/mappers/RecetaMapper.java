@@ -6,7 +6,7 @@ import org.puravidatgourmet.api.domain.entity.Receta;
 import org.puravidatgourmet.api.domain.pojo.RecetaPojo;
 import org.springframework.stereotype.Component;
 
-@Mapper
+@Mapper(uses = {UserMapper.class})
 @Component
 public interface RecetaMapper {
 

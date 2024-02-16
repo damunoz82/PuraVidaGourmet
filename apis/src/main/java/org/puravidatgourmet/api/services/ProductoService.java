@@ -21,6 +21,9 @@ public class ProductoService {
 
   @Transactional
   public Producto saveProducto(Producto producto) {
+    // calcular coste final de producto
+    calcularCosteFinalDeProducto(producto);
+    // guardar.
     return productoRepository.save(producto);
   }
 
@@ -52,5 +55,18 @@ public class ProductoService {
   public void validateDelete(long producto) {
     // fixme finish
     // check if ingrediente is been used in any recipe.
+  }
+
+  private void calcularCosteFinalDeProducto(Producto producto) {
+    float costeUnitario = 0;
+    switch (producto.getUnidadMedida()) {
+      case GRAMOS, MILI_LITROS ->
+          costeUnitario =
+              (float) 1 * producto.getPrecioDeCompra() / producto.getCantidadPorUnidad();
+      case UNIDAD ->
+          costeUnitario = (float) producto.getPrecioDeCompra() / producto.getCantidadPorUnidad();
+    }
+
+    producto.setCosteUnitario(costeUnitario);
   }
 }

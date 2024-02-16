@@ -1,5 +1,6 @@
 package org.puravidatgourmet.api.domain.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Max;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -49,4 +50,7 @@ public class ProductoPojo {
   @Min(value = 0, message = "Porcentaje de merma no debe ser menor que cero.")
   @Max(value = 1, message = "Porcentaje de merma no debe ser mayor que uno.")
   private float porcentajeMerma;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private float costeUnitario;
 }

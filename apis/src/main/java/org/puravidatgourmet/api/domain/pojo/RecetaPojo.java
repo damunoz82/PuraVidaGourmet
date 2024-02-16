@@ -1,5 +1,7 @@
 package org.puravidatgourmet.api.domain.pojo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.sql.Date;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -26,29 +28,58 @@ public class RecetaPojo {
   @NotBlank(message = "Nombre de la receta no puede estar en blanco")
   private String nombre;
 
-  @NotEmpty(message = "Lista de ingredientes no puede estar vacia")
-  private List<IngredientePojo> ingredientes;
+  @NotNull(message = "Categoria no puede ser nula")
+  private CategoriaRecetaPojo categoria;
+
+  @Min(0)
+  private long tamanioPorcion;
+
+  @Max(0)
+  private long numeroPorciones;
+
+  @Min(0)
+  private long temperaturaDeServido;
 
   @Min(0)
   private long tiempoPreparacion;
 
+  @Min(0)
+  private long tiempoCoccion;
+
+  @Min(0)
+  private double precioDeVenta;
+
+  @Min(0)
   @Max(1)
-  private double margenDeBeneficio;
+  private double impuestos;
 
-  @Min(0)
-  private double costosFijos;
+  @NotEmpty private String elaboracion;
 
-  @Min(0)
-  private double otrosCostos;
+  @NotEmpty private String equipoNecesario;
 
-  @Min(0)
-  private double descuentos;
+  @NotEmpty private String alergenos;
 
-  @Min(0)
-  private double rendimiento;
-
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private UserPojo usuarioRegistra;
 
-  @NotNull(message = "Categoria no puede ser nula")
-  private TipoProductoPojo categoria;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private UserPojo usuarioModifica;
+
+  @NotEmpty(message = "Lista de ingredientes no puede estar vacia")
+  private List<IngredientePojo> ingredientes;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private double costoReceta;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private double costoPorcion;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private double margenGanancia;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Date fechaRegistro;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Date fechaModificacion;
 }

@@ -6,10 +6,12 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.sql.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,7 +60,11 @@ public class Receta {
 
   private String alergenos;
 
-  @ManyToOne private User usuarioRegistra;
+  @JoinColumn(updatable = false)
+  @ManyToOne
+  private User usuarioRegistra;
+
+  @ManyToOne private User usuarioModifica;
 
   @OneToMany(fetch = FetchType.EAGER, targetEntity = Ingrediente.class)
   private List<Ingrediente> ingredientes;
@@ -68,4 +74,8 @@ public class Receta {
   private double costoPorcion;
 
   private double margenGanancia;
+
+  private Date fechaRegistro;
+
+  private Date fechaModificacion;
 }

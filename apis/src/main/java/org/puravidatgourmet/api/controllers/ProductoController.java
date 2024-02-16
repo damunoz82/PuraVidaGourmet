@@ -80,9 +80,16 @@ public class ProductoController extends BaseController {
   public ResponseEntity<String> update(@PathVariable long id, @RequestBody ProductoPojo producto) {
     try {
       LOGGER.info("START: update with Producto: {}", producto);
+
+      // check exists.
+      if (productoService.getProductoById(id).isEmpty()) {
+        throw new ResourceNotFoundException("Producto", "id", id);
+      }
+
       producto.setId(id);
       productoService.validateUpdate(producto);
       productoService.saveProducto(mapper.toProducto(producto));
+
       URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
       return ResponseEntity.noContent().location(location).build();
     } finally {

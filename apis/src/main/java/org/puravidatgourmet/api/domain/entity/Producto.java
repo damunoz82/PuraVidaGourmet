@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -42,8 +41,6 @@ public class Producto {
 
   @ManyToOne private TipoProducto tipoProducto;
 
-  @NotNull private UnidadMedidas unidadMedida;
-
   @Min(0)
   private long precioDeCompra;
 
@@ -52,6 +49,11 @@ public class Producto {
 
   @NotNull private FormatoCompra formatoCompra;
 
+  @NotNull private UnidadMedidas unidadMedida;
+
   @Min(0)
   private float porcentajeMerma;
+
+  @Min(0)
+  private float costeUnitario;
 }

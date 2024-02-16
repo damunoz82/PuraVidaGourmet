@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 public interface TipoProductoMapper {
 
-  TipoProducto toTipoProducto(TipoProductoPojo categoriaRecetaPojo);
+  TipoProducto toTipoProducto(TipoProductoPojo tipoProductoPojo);
 
   List<TipoProductoPojo> toTipoProductoPojo(List<TipoProducto> tipoProductos);
 

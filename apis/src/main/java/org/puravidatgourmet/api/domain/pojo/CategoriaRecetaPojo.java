@@ -1,7 +1,7 @@
 package org.puravidatgourmet.api.domain.pojo;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,15 +12,14 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class IngredientePojo {
-
-  private long ingredienteId;
+public class CategoriaRecetaPojo {
 
   @Min(0)
-  private long cantidad;
+  private long id;
 
-  @NotNull private ProductoReadOnlyPojo producto;
+  @NotBlank(message = "Nombre de la categoria no puede estar en blanco.")
+  private String nombre;
 }

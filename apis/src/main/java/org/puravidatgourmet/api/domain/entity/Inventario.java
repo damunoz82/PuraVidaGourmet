@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.puravidatgourmet.api.domain.enums.EstadoInventario;
 
 @Data
 @ToString
@@ -34,4 +35,6 @@ public class Inventario {
   @ManyToOne private Departamento departamento;
 
   @OneToMany private List<InventarioRegistro> registros;
+
+  private EstadoInventario estado;
 }

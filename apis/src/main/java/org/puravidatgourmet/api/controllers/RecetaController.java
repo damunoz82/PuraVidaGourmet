@@ -60,14 +60,14 @@ public class RecetaController extends BaseController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(
       @RequestBody @Valid RecetaPojo receta, @CurrentUser UserPrincipal userPrincipal) {
-    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
 
     recetasServices.validateSave(receta);
 
     Receta recetaFull = mapper.toReceta(receta);
+    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
     recetaFull.setUsuarioRegistra(
         user.orElseThrow(() -> new RuntimeException("Creating user not found")));
-    recetasServices.saveReceta(recetaFull);
+
     Receta result = recetasServices.saveReceta(recetaFull);
 
     return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
@@ -79,14 +79,21 @@ public class RecetaController extends BaseController {
       @PathVariable long id,
       @RequestBody RecetaPojo receta,
       @CurrentUser UserPrincipal userPrincipal) {
+
+    // check exists.
+    if (recetasServices.get(id).isEmpty()) {
+      throw new ResourceNotFoundException("Receta", "id", id);
+    }
+
     receta.setId(id);
-    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
 
     recetasServices.validateUpdate(receta);
 
     Receta recetaFull = mapper.toReceta(receta);
-    recetaFull.setUsuarioRegistra(
-        user.orElseThrow(() -> new RuntimeException("Creating user not found")));
+    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
+    recetaFull.setUsuarioModifica(
+        user.orElseThrow(() -> new RuntimeException("Updating user not found")));
+
     recetasServices.saveReceta(recetaFull);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
