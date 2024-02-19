@@ -30,7 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/producto", produces = "application/json")
 public class ProductoController extends BaseController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProductoController.class);
   @Autowired private ProductoService productoService;
   @Autowired private ProductoMapper mapper;
 

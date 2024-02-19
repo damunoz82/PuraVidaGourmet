@@ -6,12 +6,16 @@ import org.puravidatgourmet.api.db.repository.ProductoRepository;
 import org.puravidatgourmet.api.domain.entity.Producto;
 import org.puravidatgourmet.api.domain.pojo.ProductoPojo;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductoService {
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProductoService.class);
 
   @Autowired private ProductoRepository productoRepository;
 
@@ -21,10 +25,21 @@ public class ProductoService {
 
   @Transactional
   public Producto saveProducto(Producto producto) {
-    // calcular coste final de producto
-    calcularCosteFinalDeProducto(producto);
-    // guardar.
-    return productoRepository.save(producto);
+    try {
+      LOGGER.info("Start: saveProducto");
+
+      // calcular coste final de producto
+      calcularCosteFinalDeProducto(producto);
+
+      // guardar.
+      return productoRepository.save(producto);
+    } catch(Exception e) {
+      LOGGER.error("Error al salvar el producto", e);
+      throw new BadRequestException("Error al salvar el producto. Verifica que los datos esten correctos." +
+              "");
+    }finally {
+      LOGGER.info("End: saveProducto");
+    }
   }
 
   public Optional<Producto> getProductoById(long id) {

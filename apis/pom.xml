@@ -122,6 +122,12 @@
       <version>${org.mapstruct.version}</version>
     </dependency>
 
+    <!-- Liquibase -->
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+    </dependency>
+
     <!-- Google Guava -->
     <dependency>
       <groupId>com.google.guava</groupId>

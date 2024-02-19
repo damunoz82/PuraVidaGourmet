@@ -5,7 +5,7 @@ services:
     environment:
       POSTGRES_PASSWORD: gourmet
       POSTGRES_USER: puravida
-      POSTGRES_DB: puraVidaSecurity
+      POSTGRES_DB: puraVida
     ports:
       - "5433:5432"
   app:
