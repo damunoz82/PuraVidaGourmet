@@ -1,0 +1,1 @@
+ALTER TABLE public.departamento DROP CONSTRAINT IF exists uk_ahgt7tvfi2u1vawme9yr6ixng;

@@ -1,11 +1,7 @@
 package org.puravidatgourmet.api.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,5 +27,6 @@ public class Departamento {
 
   @NotEmpty private String nombre;
 
-  @OneToOne @NotEmpty private User responsable;
+  @ManyToOne
+  @NotEmpty private User responsable;
 }

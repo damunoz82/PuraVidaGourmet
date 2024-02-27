@@ -1,8 +1,15 @@
 package org.puravidatgourmet.api.controllers;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.puravidatgourmet.api.db.repository.UsuarioRepository;
 import org.puravidatgourmet.api.domain.User;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
@@ -14,6 +21,7 @@ import org.puravidatgourmet.api.services.TokenService;
 import org.puravidatgourmet.api.utils.AuthProvider;
 import org.puravidatgourmet.api.utils.RoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -51,8 +59,41 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = tokenService.createToken(authentication);
-        return ResponseEntity.ok(new AuthResponse(token));
+        final String token = tokenService.createToken((UserPrincipal) authentication.getPrincipal());
+        final String refreshToken = tokenService.createRefreshToken((UserPrincipal) authentication.getPrincipal());
+        return ResponseEntity.ok(AuthResponse.builder()
+                        .userName(authentication.getName())
+                        .createdAt(new Date())
+                .accessToken(token)
+                .refreshToken(refreshToken)
+                        .tokenType("Bearer")
+                .build());
+    }
+
+    @PostMapping("/refresh-token")
+    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String refreshToken;
+        final String email;
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return;
+        }
+        refreshToken = authHeader.substring(7);
+        email = tokenService.getUserIdFromToken(refreshToken);
+        if (email != null) {
+            User user = userRepository.findByEmail(email).orElseThrow();
+            if (tokenService.validateToken(refreshToken) && user.isEnabled()) {
+                String accessToken = tokenService.createToken(new UserPrincipal(user.getEmail(), user.getPassword(), null, user.isEnabled()));
+                AuthResponse authResponse = AuthResponse.builder()
+                        .userName(user.getEmail())
+                        .createdAt(new Date())
+                        .accessToken(accessToken)
+                        .refreshToken(refreshToken)
+                        .tokenType("Bearer")
+                        .build();
+                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            }
+        }
     }
 
     @PostMapping("/signup")
@@ -80,5 +121,4 @@ public class AuthController {
         return ResponseEntity.created(location)
                 .body(new ApiResponse(true, "User registered successfully"));
     }
-
 }

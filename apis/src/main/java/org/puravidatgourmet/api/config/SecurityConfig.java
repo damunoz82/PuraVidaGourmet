@@ -88,9 +88,7 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf(AbstractHttpConfigurer::disable)
-        .cors(AbstractHttpConfigurer::disable)
-        //        .formLogin(AbstractHttpConfigurer::disable)
-        //        .httpBasic(AbstractHttpConfigurer::disable)
+//        .cors(AbstractHttpConfigurer::disable)
         .exceptionHandling(e -> e.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
         .authorizeHttpRequests(
             request -> {

@@ -8,6 +8,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import java.util.Date;
+import java.util.function.Function;
+
 import org.puravidatgourmet.api.config.AppProperties;
 import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.slf4j.Logger;
@@ -26,19 +28,12 @@ public class TokenService {
     this.appProperties = appProperties;
   }
 
-  public String createToken(Authentication authentication) {
-    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+  public String createToken(UserPrincipal userPrincipal) {
+    return generateToken(userPrincipal, appProperties.getAuth().getTokenExpirationMsec());
+  }
 
-    Date now = new Date();
-    Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
-
-    return Jwts.builder()
-        .setSubject(userPrincipal.getUsername()) // here we can add more info if needed.
-//        .setPayload("") // here we can add more info if needed.
-        .setIssuedAt(new Date())
-        .setExpiration(expiryDate)
-        .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
-        .compact();
+  public String createRefreshToken(UserPrincipal userPrincipal) {
+    return generateToken(userPrincipal, appProperties.getAuth().getTokenRefreshExpirationMsec());
   }
 
   public String getUserIdFromToken(String token) {
@@ -69,5 +64,15 @@ public class TokenService {
       logger.error("JWT claims string is empty.");
     }
     return false;
+  }
+
+  private String generateToken(UserPrincipal userPrincipal, long expiration) {
+    return Jwts.builder()
+            .setSubject(userPrincipal.getUsername()) // here we can add more info if needed.
+//            .setPayload(userPrincipal.toString()) // here we can add more info if needed.
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis()+ expiration))
+            .signWith(SignatureAlgorithm.HS512, appProperties.getAuth().getTokenSecret())
+            .compact();
   }
 }

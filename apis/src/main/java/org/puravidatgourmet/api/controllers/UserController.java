@@ -98,7 +98,7 @@ public class UserController {
       }
 
       // check if new password
-      if (Strings.isNullOrEmpty(user.getPassword())) {
+      if (!Strings.isNullOrEmpty(user.getPassword())) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
       } else {
         user.setPassword(dbUser.get().getPassword());

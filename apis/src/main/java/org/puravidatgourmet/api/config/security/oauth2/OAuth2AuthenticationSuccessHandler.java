@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import org.puravidatgourmet.api.config.AppProperties;
+import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
 import org.puravidatgourmet.api.services.TokenService;
 import org.puravidatgourmet.api.utils.CookieUtils;
@@ -58,7 +59,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-        String token = tokenService.createToken(authentication);
+        String token = tokenService.createToken((UserPrincipal) authentication.getPrincipal());
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("token", token)
