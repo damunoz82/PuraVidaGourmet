@@ -5,3 +5,5 @@ databaseChangeLog:
       file: classpath:/db/changelog/changes/002-addedworkflow.sql
   - include:
       file: classpath:/db/changelog/changes/003-cleanPersist.sql
+  - include:
+      file: classpath:/db/changelog/changes/004-cleanPersist.sql

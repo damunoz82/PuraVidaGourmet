@@ -77,7 +77,7 @@ public class ProductoController extends BaseController {
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<String> update(@PathVariable long id, @RequestBody ProductoPojo producto) {
+  public ResponseEntity<String> update(@PathVariable long id, @Valid @RequestBody ProductoPojo producto) {
     try {
       LOGGER.info("START: update with Producto: {}", producto);
 

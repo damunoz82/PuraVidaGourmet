@@ -38,7 +38,7 @@ public class Receta {
   @Column(unique = true)
   private String nombre;
 
-  @OneToOne() private CategoriaReceta categoriaReceta;
+  @ManyToOne() private CategoriaReceta categoriaReceta;
 
   private long tamanioPorcion;
 
@@ -50,9 +50,9 @@ public class Receta {
 
   private long tiempoCoccion;
 
-  private double precioDeVenta;
+  private float precioDeVenta;
 
-  private double impuestos;
+  private float impuestos;
 
   private String elaboracion;
 
@@ -69,11 +69,11 @@ public class Receta {
   @OneToMany(fetch = FetchType.EAGER, targetEntity = Ingrediente.class)
   private List<Ingrediente> ingredientes;
 
-  private double costoReceta;
+  private float costoReceta;
 
-  private double costoPorcion;
+  private float costoPorcion;
 
-  private double margenGanancia;
+  private float margenGanancia;
 
   private Date fechaRegistro;
 

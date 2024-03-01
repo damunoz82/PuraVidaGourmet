@@ -1,11 +1,14 @@
 package org.puravidatgourmet.api.controllers;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.puravidatgourmet.api.domain.entity.Departamento;
 import org.puravidatgourmet.api.domain.pojo.DepartamentoPojo;
+import org.puravidatgourmet.api.domain.pojo.ProductoPojo;
 import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidatgourmet.api.mappers.DepartamentoMapper;
 import org.puravidatgourmet.api.services.DepartamentoService;
@@ -38,7 +41,9 @@ public class DepartamentoController extends BaseController {
   public List<DepartamentoPojo> getAll() {
     try {
       LOGGER.info("START: getAll");
-      return mapper.toDepartamentoPojo(departamentoService.getAll());
+      return mapper.toDepartamentoPojo(departamentoService.getAll()).stream()
+              .sorted(Comparator.comparing((DepartamentoPojo::getNombre)))
+              .collect(Collectors.toList());
 
     } finally {
       LOGGER.info("END: getAll");

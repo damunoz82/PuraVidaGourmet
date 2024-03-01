@@ -2,12 +2,16 @@ package org.puravidatgourmet.api.controllers;
 
 import com.google.common.base.Strings;
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.puravidatgourmet.api.config.security.CurrentUser;
 import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.puravidatgourmet.api.db.repository.UsuarioRepository;
 import org.puravidatgourmet.api.domain.User;
+import org.puravidatgourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
 import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -52,7 +56,9 @@ public class UserController {
   public List<User> getAll() {
     try {
       LOGGER.info("START: getAll");
-      return userRepository.findAll();
+      return userRepository.findAll().stream()
+              .sorted(Comparator.comparing((User::getName)))
+              .collect(Collectors.toList());
 
     } finally {
       LOGGER.info("END: getAll");

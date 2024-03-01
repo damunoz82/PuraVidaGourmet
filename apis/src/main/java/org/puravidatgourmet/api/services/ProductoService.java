@@ -1,5 +1,6 @@
 package org.puravidatgourmet.api.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.puravidatgourmet.api.db.repository.ProductoRepository;
@@ -79,9 +80,16 @@ public class ProductoService {
           costeUnitario =
               (float) 1 * producto.getPrecioDeCompra() / producto.getCantidadPorUnidad();
       case UNIDAD ->
-          costeUnitario = (float) producto.getPrecioDeCompra() / producto.getCantidadPorUnidad();
+          costeUnitario = (float) producto.getPrecioDeCompra() / producto.getCantidadPorUnidad() * (1 - producto.getPorcentajeMerma());
     }
 
-    producto.setCosteUnitario(costeUnitario);
+    producto.setCosteUnitario(round(costeUnitario, 2));
+  }
+
+  // fixme - move to more suitable place
+  private float round(float d, int decimalPlace) {
+    BigDecimal bd = new BigDecimal(Float.toString(d));
+    bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+    return bd.floatValue();
   }
 }

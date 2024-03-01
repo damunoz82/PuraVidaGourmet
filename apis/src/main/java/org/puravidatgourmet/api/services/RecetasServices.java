@@ -1,6 +1,8 @@
 package org.puravidatgourmet.api.services;
 
 import com.google.common.base.Strings;
+
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.puravidatgourmet.api.db.repository.IngredienteRepository;
@@ -98,7 +100,7 @@ public class RecetasServices {
   private void validateAndCalculateCostsForReceipe(Receta receta) {
 
     // calculo del costo de la receta
-    receta.setCostoReceta(
+    receta.setCostoReceta(round(
         receta.getIngredientes().stream()
             .map(
                 i -> {
@@ -112,12 +114,19 @@ public class RecetasServices {
 
                   return i.getCantidad() * producto.getCosteUnitario();
                 })
-            .reduce((float) 0, Float::sum));
+            .reduce((float) 0, Float::sum), 2));
 
     // calculo del costo por porcion
-    receta.setCostoPorcion(receta.getCostoReceta() / receta.getNumeroPorciones());
+    receta.setCostoPorcion(round(receta.getCostoReceta() / receta.getNumeroPorciones(), 2));
 
     // calculo del margen de ganancia
-    receta.setMargenGanancia(receta.getPrecioDeVenta() / receta.getCostoPorcion());
+    receta.setMargenGanancia(round (1 - (receta.getCostoPorcion() / receta.getPrecioDeVenta()), 2));
+  }
+
+  // fixme - move to more suitable place
+  private float round(float d, int decimalPlace) {
+    BigDecimal bd = new BigDecimal(Float.toString(d));
+    bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
+    return bd.floatValue();
   }
 }

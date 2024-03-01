@@ -58,8 +58,8 @@ spring:
 app:
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
-    tokenExpirationMsec: 36000000 # around 10 hours
-    tokenRefreshExpirationMsec: 360000000 # check what I put here.
+    tokenExpirationMsec: 36000000 # 1 hour = 3600000, 1 minuto = 60000
+    tokenRefreshExpirationMsec: 360000000 # around 4.1 days.
   oauth2:
     authorizedRedirectUris:
       - http://localhost:3000/oauth2/redirect

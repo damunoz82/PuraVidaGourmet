@@ -1,11 +1,14 @@
 package org.puravidatgourmet.api.controllers;
 
 import java.net.URI;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.puravidatgourmet.api.domain.entity.CategoriaReceta;
 import org.puravidatgourmet.api.domain.pojo.CategoriaRecetaPojo;
+import org.puravidatgourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidatgourmet.api.mappers.CategoriaRecetaMapper;
 import org.puravidatgourmet.api.services.CategoriaRecetaService;
@@ -38,7 +41,9 @@ public class CategoriaRecetaController extends BaseController {
   public List<CategoriaRecetaPojo> getAll() {
     try {
       LOGGER.info("START: getAll");
-      return mapper.toCategoriaRecetaPojo(categoriaRecetaService.getAll());
+      return mapper.toCategoriaRecetaPojo(categoriaRecetaService.getAll()).stream()
+              .sorted(Comparator.comparing((CategoriaRecetaPojo::getNombre)))
+              .collect(Collectors.toList());
 
     } finally {
       LOGGER.info("END: getAll");

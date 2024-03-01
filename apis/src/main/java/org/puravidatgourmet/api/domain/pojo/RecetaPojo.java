@@ -47,11 +47,11 @@ public class RecetaPojo {
   private long tiempoCoccion;
 
   @Min(0)
-  private double precioDeVenta;
+  private float precioDeVenta;
 
   @Min(0)
   @Max(1)
-  private double impuestos;
+  private float impuestos;
 
   @NotEmpty private String elaboracion;
 
@@ -69,13 +69,13 @@ public class RecetaPojo {
   private List<IngredientePojo> ingredientes;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private double costoReceta;
+  private float costoReceta;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private double costoPorcion;
+  private float costoPorcion;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private double margenGanancia;
+  private float margenGanancia;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Date fechaRegistro;
