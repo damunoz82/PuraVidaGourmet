@@ -1,12 +1,6 @@
 package org.puravidatgourmet.api.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import java.sql.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.puravidatgourmet.api.domain.User;
+import org.puravidatgourmet.api.domain.converters.EstadoInventarioConverter;
 import org.puravidatgourmet.api.domain.enums.EstadoInventario;
 
 @Data
@@ -22,19 +18,24 @@ import org.puravidatgourmet.api.domain.enums.EstadoInventario;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "inventario")
 public class Inventario {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  private long fecha;
+  private Date fecha_creacion;
 
-  @ManyToOne private Departamento departamento;
+  private Date fecha_modificacion;
 
-  @OneToMany private List<InventarioRegistro> registros;
+  private String comentario;
 
+  private Departamento departamento;
+
+  private User responsable;
+
+  private String periodoMeta;
+
+//  @Convert(converter = EstadoInventarioConverter.class)
   private EstadoInventario estado;
+
+  private List<InventarioDetalle> detalle;
 }

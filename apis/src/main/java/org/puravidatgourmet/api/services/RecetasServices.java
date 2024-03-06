@@ -5,14 +5,18 @@ import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.puravidatgourmet.api.db.repository.IngredienteRepository;
 import org.puravidatgourmet.api.db.repository.ProductoRepository;
 import org.puravidatgourmet.api.db.repository.RecetaRepository;
+import org.puravidatgourmet.api.db.repository.UsuarioRepository;
+import org.puravidatgourmet.api.domain.User;
 import org.puravidatgourmet.api.domain.entity.Ingrediente;
 import org.puravidatgourmet.api.domain.entity.Producto;
 import org.puravidatgourmet.api.domain.entity.Receta;
-import org.puravidatgourmet.api.domain.pojo.RecetaPojo;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
+import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,24 +30,52 @@ public class RecetasServices {
 
   @Autowired private ProductoRepository productoRepository;
 
+  @Autowired private UsuarioRepository usuarioRepository;
+
   @Transactional
-  public Receta saveReceta(Receta receta) {
-    // Get Receta from DB
-    Optional<Receta> dbReceta = recetaRepository.findById(receta.getId());
+  public Receta saveReceta(Receta receta, UserPrincipal userPrincipal) {
 
-    // cleanup
-    dbReceta.ifPresent(
-        value -> value.getIngredientes().forEach(i -> ingredienteRepository.delete(i)));
+    // get current user
+    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
 
-    // validate products exists and calculate costs.
-    validateAndCalculateCostsForReceipe(receta);
 
-    // make sure ingredients are in the DB
-    for (Ingrediente ingrediente : receta.getIngredientes()) {
-      ingredienteRepository.save(ingrediente);
+
+    // if updating
+    if (receta.getId() > 0) {
+      // validate update
+      validateUpdate(receta);
+
+      // check exists.
+      Optional<Receta> dbReceta = recetaRepository.findById(receta.getId());
+      if (dbReceta.isEmpty()) {
+        throw new ResourceNotFoundException("Receta", "id", receta.getId());
+      }
+
+      // set updating user
+      receta.setUsuarioModifica(
+              user.orElseThrow(() -> new RuntimeException("Updating user not found")));
+
+      // clean up ingredientes
+      ingredienteRepository.deleteForReceta(dbReceta.orElseThrow().getId());
+
+    } else {
+      // is creating
+
+      // validate create
+      validateSave(receta);
+
+      // set creating user
+      receta.setUsuarioRegistra(user.orElseThrow(() -> new RuntimeException("Creating user not found")));
     }
 
-    return recetaRepository.save(receta);
+    calculateCostsForReceipe(receta);
+
+    Receta saved = recetaRepository.save(receta);
+
+    // save ingredientes
+    ingredienteRepository.save(receta.getIngredientes(), saved.getId());
+
+    return saved;
   }
 
   public List<Receta> getAll(String categoria) {
@@ -54,27 +86,30 @@ public class RecetasServices {
   }
 
   public Optional<Receta> get(long id) {
-    return recetaRepository.findById(id);
+    Optional<Receta> receta = recetaRepository.findById(id);
+    // load ingredientes
+    receta.orElseThrow().setIngredientes(ingredienteRepository.findIngredientes(id));
+    return receta;
   }
 
   public void delete(long id) {
-    recetaRepository.deleteById(id);
+    recetaRepository.delete(id);
   }
 
-  public void validateSave(RecetaPojo receta) {
-    Receta dbReceta = recetaRepository.findByNombre(receta.getNombre());
+  public void validateSave(Receta receta) {
+    Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
-    if (dbReceta != null) {
+    if (dbReceta.isPresent()) {
       throw new BadRequestException("Ya existe una receta con ese nombre");
     }
 
     //    validateIngredientes(receta.getIngredientes());
   }
 
-  public void validateUpdate(RecetaPojo receta) {
-    Receta dbReceta = recetaRepository.findByNombre(receta.getNombre());
+  public void validateUpdate(Receta receta) {
+    Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
-    if (dbReceta != null && dbReceta.getId() != receta.getId()) {
+    if (dbReceta.isPresent() && dbReceta.get().getId() != receta.getId()) {
       throw new BadRequestException(
           "Ya existe una receta con ese nombre - escoge otro nombre para actualizar");
     }
@@ -97,7 +132,7 @@ public class RecetasServices {
   //        });
   //  }
 
-  private void validateAndCalculateCostsForReceipe(Receta receta) {
+  private void calculateCostsForReceipe(Receta receta) {
 
     // calculo del costo de la receta
     receta.setCostoReceta(round(
@@ -120,7 +155,8 @@ public class RecetasServices {
     receta.setCostoPorcion(round(receta.getCostoReceta() / receta.getNumeroPorciones(), 2));
 
     // calculo del margen de ganancia
-    receta.setMargenGanancia(round (1 - (receta.getCostoPorcion() / receta.getPrecioDeVenta()), 2));
+    float impuestos = receta.getImpuestos() * receta.getPrecioDeVenta();
+    receta.setMargenGanancia(round (1 - ((receta.getCostoPorcion() - impuestos) / receta.getPrecioDeVenta()), 2));
   }
 
   // fixme - move to more suitable place

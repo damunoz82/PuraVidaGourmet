@@ -19,5 +19,5 @@ ENV DATABASE_URL jdbc:postgresql://db:5432/puraVida
 ENV DATABASE_USER puravida
 ENV DATABASE_PASSWORD gourmet
 
-# how to run the application
+# Run the application
 ENTRYPOINT ["java", "-jar", "pura-vida-gourmet-api.jar"]

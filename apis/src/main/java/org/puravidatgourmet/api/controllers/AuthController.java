@@ -18,8 +18,8 @@ import org.puravidatgourmet.api.payload.AuthResponse;
 import org.puravidatgourmet.api.payload.LoginRequest;
 import org.puravidatgourmet.api.payload.SignUpRequest;
 import org.puravidatgourmet.api.services.TokenService;
-import org.puravidatgourmet.api.utils.AuthProvider;
-import org.puravidatgourmet.api.utils.RoleProvider;
+import org.puravidatgourmet.api.domain.enums.AuthProvider;
+import org.puravidatgourmet.api.domain.enums.RoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +39,7 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
 
     @Autowired
-    private UsuarioRepository userRepository;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -81,7 +81,7 @@ public class AuthController {
         refreshToken = authHeader.substring(7);
         email = tokenService.getUserIdFromToken(refreshToken);
         if (email != null) {
-            User user = userRepository.findByEmail(email).orElseThrow();
+            User user = usuarioRepository.findByEmail(email).orElseThrow();
             if (tokenService.validateToken(refreshToken) && user.isEnabled()) {
                 String accessToken = tokenService.createToken(new UserPrincipal(user.getEmail(), user.getPassword(), null, user.isEnabled()));
                 AuthResponse authResponse = AuthResponse.builder()
@@ -98,7 +98,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(userRepository.existsByEmail(signUpRequest.getEmail())) {
+        if(usuarioRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
             throw new BadRequestException("Email address already in use.");
         }
 
@@ -112,7 +112,7 @@ public class AuthController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        User result = userRepository.save(user);
+        User result = usuarioRepository.save(user);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentContextPath().path("/user/me")

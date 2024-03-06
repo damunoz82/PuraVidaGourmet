@@ -29,7 +29,7 @@ public class TipoProductoService {
   }
 
   public void deleteById(long id) {
-    tipoProductoRepository.deleteById(id);
+    tipoProductoRepository.delete(id);
   }
 
   public void validateSave(TipoProductoPojo receta) {

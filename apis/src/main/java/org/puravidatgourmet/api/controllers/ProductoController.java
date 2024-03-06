@@ -31,8 +31,15 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class ProductoController extends BaseController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ProductoController.class);
-  @Autowired private ProductoService productoService;
-  @Autowired private ProductoMapper mapper;
+//  @Autowired
+  private final ProductoService productoService;
+//  @Autowired
+  private final ProductoMapper mapper;
+
+  public ProductoController(ProductoService productoService, ProductoMapper productoMapper) {
+    this.productoService = productoService;
+    this.mapper = productoMapper;
+  }
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")

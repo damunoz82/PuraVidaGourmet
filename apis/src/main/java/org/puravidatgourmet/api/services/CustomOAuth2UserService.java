@@ -9,8 +9,8 @@ import org.puravidatgourmet.api.config.security.oauth2.user.OAuth2UserInfoFactor
 import org.puravidatgourmet.api.db.repository.UsuarioRepository;
 import org.puravidatgourmet.api.domain.User;
 import org.puravidatgourmet.api.exceptions.OAuth2AuthenticationProcessingException;
-import org.puravidatgourmet.api.utils.AuthProvider;
-import org.puravidatgourmet.api.utils.RoleProvider;
+import org.puravidatgourmet.api.domain.enums.AuthProvider;
+import org.puravidatgourmet.api.domain.enums.RoleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
@@ -25,7 +25,11 @@ import org.springframework.util.StringUtils;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     @Autowired
-    private UsuarioRepository userRepository;
+    private UsuarioRepository usuarioRepository;
+
+    public CustomOAuth2UserService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest) throws OAuth2AuthenticationException {
@@ -47,7 +51,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
         }
 
-        Optional<User> userOptional = userRepository.findByEmail(oAuth2UserInfo.getEmail());
+        Optional<User> userOptional = usuarioRepository.findByEmail(oAuth2UserInfo.getEmail());
         User user;
         if(userOptional.isPresent()) {
             user = userOptional.get();
@@ -73,13 +77,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     user.setEmail(oAuth2UserInfo.getEmail());
 //        user.setImageUrl(oAuth2UserInfo.getImageUrl());
     user.setRoles(List.of(RoleProvider.ROLE_USER));   // DEFAULT USER ROLE...  OTHER ROLES ARE GRANTED PER REQUEST.
-    return userRepository.save(user);
+    return usuarioRepository.save(user);
     }
 
     private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
     existingUser.setName(oAuth2UserInfo.getName());
 //        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-    return userRepository.save(existingUser);
+    return usuarioRepository.save(existingUser);
     }
 
 }

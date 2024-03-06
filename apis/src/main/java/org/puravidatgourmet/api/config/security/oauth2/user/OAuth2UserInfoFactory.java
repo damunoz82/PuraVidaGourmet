@@ -2,7 +2,7 @@ package org.puravidatgourmet.api.config.security.oauth2.user;
 
 import java.util.Map;
 import org.puravidatgourmet.api.exceptions.OAuth2AuthenticationProcessingException;
-import org.puravidatgourmet.api.utils.AuthProvider;
+import org.puravidatgourmet.api.domain.enums.AuthProvider;
 
 public class OAuth2UserInfoFactory {
 

@@ -5,6 +5,8 @@ import java.util.Optional;
 import org.puravidatgourmet.api.controllers.UserController;
 import org.puravidatgourmet.api.db.repository.UsuarioRepository;
 import org.puravidatgourmet.api.domain.User;
+import org.puravidatgourmet.api.domain.enums.AuthProvider;
+import org.puravidatgourmet.api.domain.enums.RoleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class DataPopulationTool implements CommandLineRunner {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-  @Autowired private UsuarioRepository userRepository;
+  @Autowired private UsuarioRepository usuarioRepository;
   @Autowired private PasswordEncoder passwordEncoder;
 
   @Override
@@ -24,7 +26,7 @@ public class DataPopulationTool implements CommandLineRunner {
     try {
       LOGGER.info("START - checking if needed db data is present.");
 
-      Optional<User> adminUser = userRepository.findByEmail("dmunoz.hon@gmail.com");
+      Optional<User> adminUser = usuarioRepository.findByEmail("dmunoz.hon@gmail.com");
       if (adminUser.isEmpty()) {
         User user = new User();
         user.setName("Admin");
@@ -34,7 +36,7 @@ public class DataPopulationTool implements CommandLineRunner {
         user.setEnabled(true);
         user.setRoles(List.of(RoleProvider.ROLE_USER, RoleProvider.ROLE_ADMIN));
 
-        userRepository.save(user);
+        usuarioRepository.save(user);
       }
     } finally {
       LOGGER.info("END - checking if needed db data is present.");

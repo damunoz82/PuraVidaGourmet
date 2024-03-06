@@ -21,7 +21,7 @@ public class ProductoService {
   @Autowired private ProductoRepository productoRepository;
 
   public void deleteById(long id) {
-    productoRepository.deleteById(id);
+    productoRepository.delete(id);
   }
 
   @Transactional

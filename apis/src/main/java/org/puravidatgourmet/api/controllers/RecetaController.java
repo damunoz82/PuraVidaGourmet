@@ -61,14 +61,8 @@ public class RecetaController extends BaseController {
   public ResponseEntity<String> create(
       @RequestBody @Valid RecetaPojo receta, @CurrentUser UserPrincipal userPrincipal) {
 
-    recetasServices.validateSave(receta);
-
-    Receta recetaFull = mapper.toReceta(receta);
-    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
-    recetaFull.setUsuarioRegistra(
-        user.orElseThrow(() -> new RuntimeException("Creating user not found")));
-
-    Receta result = recetasServices.saveReceta(recetaFull);
+    Receta entity = mapper.toReceta(receta);
+    Receta result = recetasServices.saveReceta(entity, userPrincipal);
 
     return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
   }
@@ -80,21 +74,9 @@ public class RecetaController extends BaseController {
       @RequestBody RecetaPojo receta,
       @CurrentUser UserPrincipal userPrincipal) {
 
-    // check exists.
-    if (recetasServices.get(id).isEmpty()) {
-      throw new ResourceNotFoundException("Receta", "id", id);
-    }
-
     receta.setId(id);
-
-    recetasServices.validateUpdate(receta);
-
-    Receta recetaFull = mapper.toReceta(receta);
-    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
-    recetaFull.setUsuarioModifica(
-        user.orElseThrow(() -> new RuntimeException("Updating user not found")));
-
-    recetasServices.saveReceta(recetaFull);
+    Receta entity = mapper.toReceta(receta);
+    recetasServices.saveReceta(entity, userPrincipal);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
     return ResponseEntity.noContent().location(location).build();

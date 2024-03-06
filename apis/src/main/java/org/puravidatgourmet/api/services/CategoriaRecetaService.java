@@ -29,7 +29,7 @@ public class CategoriaRecetaService {
   }
 
   public void deleteById(long id) {
-    categoriaRecetaRepository.deleteById(id);
+    categoriaRecetaRepository.delete(id);
   }
 
   public void validateSave(CategoriaRecetaPojo categoriaRecetaPojo) {

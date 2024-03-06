@@ -11,7 +11,6 @@ import org.puravidatgourmet.api.config.security.CurrentUser;
 import org.puravidatgourmet.api.config.security.UserPrincipal;
 import org.puravidatgourmet.api.db.repository.UsuarioRepository;
 import org.puravidatgourmet.api.domain.User;
-import org.puravidatgourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidatgourmet.api.exceptions.BadRequestException;
 import org.puravidatgourmet.api.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -34,7 +33,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class UserController {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-  @Autowired private UsuarioRepository userRepository;
+  @Autowired private UsuarioRepository usuarioRepository;
 
   @Autowired private PasswordEncoder passwordEncoder;
 
@@ -43,7 +42,7 @@ public class UserController {
   public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
     try {
       LOGGER.info("END: getCurrentUser with userPrincipal: {}", userPrincipal);
-      return userRepository
+      return usuarioRepository
           .findByEmail(userPrincipal.getName())
           .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getName()));
     } finally {
@@ -56,7 +55,7 @@ public class UserController {
   public List<User> getAll() {
     try {
       LOGGER.info("START: getAll");
-      return userRepository.findAll().stream()
+      return usuarioRepository.findAll().stream()
               .sorted(Comparator.comparing((User::getName)))
               .collect(Collectors.toList());
 
@@ -70,7 +69,7 @@ public class UserController {
   public User get(@PathVariable long id) {
     try {
       LOGGER.info("START: get with id: {}", id);
-      return userRepository
+      return usuarioRepository
           .findById(id)
           .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
 
@@ -87,7 +86,7 @@ public class UserController {
       user.setId(id);
 
       // get unchanged user from DB.
-      Optional<User> dbUser = userRepository.findById(id);
+      Optional<User> dbUser = usuarioRepository.findById(id);
 
       // check exists.
       if (dbUser.isEmpty()) {
@@ -98,7 +97,7 @@ public class UserController {
 
       // check if email changed:
       if (!dbUsuario.getEmail().equals(user.getEmail())) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
           throw new BadRequestException("Ya existe un usuario con ese correo electronico.");
         }
       }
@@ -110,7 +109,7 @@ public class UserController {
         user.setPassword(dbUser.get().getPassword());
       }
 
-      userRepository.save(user);
+      usuarioRepository.save(user);
 
       URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
       return ResponseEntity.noContent().location(location).build();
@@ -128,7 +127,7 @@ public class UserController {
 
       // check user exists in the DB
       User dbUser =
-          userRepository
+          usuarioRepository
               .findById(id)
               .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
 
@@ -138,7 +137,7 @@ public class UserController {
       assert dbUser != null;
       dbUser.setEnabled(false);
 
-      userRepository.save(dbUser);
+      usuarioRepository.save(dbUser);
       URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
       return ResponseEntity.noContent().location(location).build();
     } finally {

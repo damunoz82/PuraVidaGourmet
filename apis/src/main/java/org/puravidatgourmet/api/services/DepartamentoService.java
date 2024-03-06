@@ -39,7 +39,7 @@ public class DepartamentoService {
   }
 
   public void deleteById(long id) {
-    departamentoRepository.deleteById(id);
+    departamentoRepository.delete(id);
   }
 
   public void validateSave(DepartamentoPojo departamento) {

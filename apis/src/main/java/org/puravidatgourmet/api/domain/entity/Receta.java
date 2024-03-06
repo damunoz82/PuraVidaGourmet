@@ -1,16 +1,5 @@
 package org.puravidatgourmet.api.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import java.sql.Date;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -27,18 +16,13 @@ import org.puravidatgourmet.api.domain.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "recetas")
 public class Receta {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
-  @Column(unique = true)
   private String nombre;
 
-  @ManyToOne() private CategoriaReceta categoriaReceta;
+  private CategoriaReceta categoriaReceta;
 
   private long tamanioPorcion;
 
@@ -60,13 +44,10 @@ public class Receta {
 
   private String alergenos;
 
-  @JoinColumn(updatable = false)
-  @ManyToOne
   private User usuarioRegistra;
 
-  @ManyToOne private User usuarioModifica;
+  private User usuarioModifica;
 
-  @OneToMany(fetch = FetchType.EAGER, targetEntity = Ingrediente.class)
   private List<Ingrediente> ingredientes;
 
   private float costoReceta;

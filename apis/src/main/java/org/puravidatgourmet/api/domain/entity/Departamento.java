@@ -1,7 +1,5 @@
 package org.puravidatgourmet.api.domain.entity;
 
-import jakarta.persistence.*;
-
 import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,16 +15,11 @@ import org.puravidatgourmet.api.domain.User;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Entity
-@Table(name = "departamento")
 public class Departamento {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
 
   @NotEmpty private String nombre;
 
-  @ManyToOne
   @NotEmpty private User responsable;
 }
