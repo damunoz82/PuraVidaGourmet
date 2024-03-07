@@ -92,6 +92,7 @@ public class RecetasServices {
   }
 
   public void delete(long id) {
+    ingredienteRepository.deleteForReceta(id);
     recetaRepository.delete(id);
   }
 

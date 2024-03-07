@@ -38,7 +38,7 @@ public class RecetaRepository  extends BaseRepository<Receta> {
           "nombre=?, numero_porciones=?, precio_de_venta=?, tamanio_porcion=?, temperatura_de_servido=?, tiempo_coccion=?, tiempo_preparacion=?, " +
           "categoria_receta_id=?, usuario_modifica_id=? where id=?";
 
-  private final String DELETE = "delete from receta where id = ?";
+  private final String DELETE = "delete from recetas where id = ?";
 
   private final RowMapper<Receta> rowMapper = (rs, rowNum) -> {
     User usuarioModifica = User.builder()

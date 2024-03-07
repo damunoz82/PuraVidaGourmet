@@ -14,6 +14,8 @@ logging:
 #    org.springframework.boot.autoconfigure: DEBUG
 
 spring:
+  liquibase:
+    enabled: true
   thymeleaf:
     cache: false
   jpa:

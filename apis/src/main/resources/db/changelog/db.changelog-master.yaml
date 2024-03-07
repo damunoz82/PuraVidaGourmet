@@ -7,3 +7,5 @@ databaseChangeLog:
       file: classpath:/db/changelog/changes/003-cleanPersist.sql
   - include:
       file: classpath:/db/changelog/changes/004-cleanPersist.sql
+  - include:
+      file: classpath:/db/changelog/changes/005-inventario.sql

@@ -1,9 +1,10 @@
+--liquibase formatted sql
+--changeset Daniel munoz:dmunoz.hon@gmail.com splitStatements:true endDelimite
+
 CREATE TABLE public.workflow (
     id bigint NOT NULL,
     nombre character varying(255)
 );
-
-ALTER TABLE public.workflow OWNER TO puravida;
 
 CREATE SEQUENCE public.workflow_id_seq
     START WITH 1
@@ -11,8 +12,6 @@ CREATE SEQUENCE public.workflow_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-ALTER TABLE public.workflow_id_seq OWNER TO puravida;
 
 ALTER SEQUENCE public.workflow_id_seq OWNED BY public.workflow.id;
 
@@ -22,3 +21,5 @@ SELECT pg_catalog.setval('public.workflow_id_seq', 1, false);
 
 ALTER TABLE ONLY public.workflow
     ADD CONSTRAINT workflow_pkey PRIMARY KEY (id);
+
+--rollback drop table public.workflow;

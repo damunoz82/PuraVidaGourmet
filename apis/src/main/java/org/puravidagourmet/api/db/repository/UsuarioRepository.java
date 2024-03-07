@@ -50,7 +50,7 @@ public class UsuarioRepository extends BaseRepository<User> {
         ps.setBoolean(2, obj.isEnabled());
         ps.setString(3, obj.getName());
         ps.setString(4, obj.getPassword());
-        ps.setString(5, obj.getProvider().name());
+        ps.setLong(5, obj.getProvider().ordinal());
         ps.setString(6, obj.getProviderId());
         ps.setString(7, obj.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
     }
