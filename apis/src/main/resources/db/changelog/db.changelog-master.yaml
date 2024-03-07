@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: classpath:/db/changelog/changes/001-initial-schema.sql
+  - include:
+      file: classpath:/db/changelog/changes/002-addedworkflow.sql
+  - include:
+      file: classpath:/db/changelog/changes/003-cleanPersist.sql
+  - include:
+      file: classpath:/db/changelog/changes/004-cleanPersist.sql
+  - include:
+      file: classpath:/db/changelog/changes/005-inventario.sql

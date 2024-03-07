@@ -16,10 +16,14 @@ executors:
     working_directory: /workspace
 
 parameters:
-  dockerImageName:
-    description: name of the docker image
+  dockerImageNameApi:
+    description: Name of the Api image
     type: string
-    default: "pvgourmet/pura-vida-gourmet"
+    default: "pvgourmet/pura-vida-gourmet-api"
+  dockerImageNameEngine:
+    description: Name of the Engine image
+    type: string
+    default: "pvgourmet/pura-vida-gourmet-engine"
   dockerImageVersion:
     description: version of the docker image
     type: string
@@ -41,14 +45,20 @@ jobs:
             equal: [ master, <<pipeline.git.branch>> ]
           steps:
             - run:
-                name: Build Docker Image
-                command: docker build -t <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>> .
+                name: Build Docker Api Image
+                command: docker build -t <<pipeline.parameters.dockerImageNameApi>>:<<pipeline.parameters.dockerImageVersion>> apis/.
+            - run:
+                name: Build Docker Engine Image
+                command: docker build -t <<pipeline.parameters.dockerImageNameEngine>>:<<pipeline.parameters.dockerImageVersion>> engines/.
             - run:
                 name: Login
                 command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             - run:
-                name: Push Image
-                command: docker push <<pipeline.parameters.dockerImageName>>:<<pipeline.parameters.dockerImageVersion>>
+                name: Push Api Image
+                command: docker push <<pipeline.parameters.dockerImageNameApi>>:<<pipeline.parameters.dockerImageVersion>>
+            - run:
+                name: Push Engine Image
+                command: docker push <<pipeline.parameters.dockerImageNameEngine>>:<<pipeline.parameters.dockerImageVersion>>
       - run: echo "No Docker Image creation or deployment needed."
 
 workflows:
