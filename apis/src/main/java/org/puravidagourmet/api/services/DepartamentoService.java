@@ -15,8 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class DepartamentoService {
 
-  @Autowired private DepartamentoRepository departamentoRepository;
-  @Autowired private UsuarioRepository usuarioRepository;
+  private final DepartamentoRepository departamentoRepository;
+  private final UsuarioRepository usuarioRepository;
+
+  public DepartamentoService(
+      DepartamentoRepository departamentoRepository, UsuarioRepository usuarioRepository) {
+    this.departamentoRepository = departamentoRepository;
+    this.usuarioRepository = usuarioRepository;
+  }
 
   @Transactional
   public Departamento saveDepartamento(Departamento departamento) {

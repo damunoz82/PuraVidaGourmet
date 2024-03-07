@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.puravidagourmet.api.domain.User;
-import org.puravidagourmet.api.domain.converters.EstadoInventarioConverter;
 import org.puravidagourmet.api.domain.enums.EstadoInventario;
 
 @Data
@@ -32,9 +31,10 @@ public class Inventario {
 
   private User responsable;
 
+  private User usuarioModifica;
+
   private String periodoMeta;
 
-//  @Convert(converter = EstadoInventarioConverter.class)
   private EstadoInventario estado;
 
   private List<InventarioDetalle> detalle;

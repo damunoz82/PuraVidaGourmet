@@ -11,10 +11,10 @@ import org.springframework.stereotype.Component;
 @Component
 public interface RecetaMapper {
 
-  @Mapping(target = "categoriaReceta", source="categoria")
+  @Mapping(target = "categoriaReceta", source = "categoria")
   Receta toReceta(RecetaPojo receta);
 
-  @Mapping(source = "categoriaReceta", target="categoria")
+  @Mapping(source = "categoriaReceta", target = "categoria")
   RecetaPojo toRecetaPojo(Receta receta);
 
   List<RecetaPojo> toRecetas(List<Receta> recetas);

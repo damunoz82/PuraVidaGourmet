@@ -4,9 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
 import org.puravidagourmet.api.domain.User;
-import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.entity.Departamento;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,30 +14,35 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class DepartamentoRepository extends BaseRepository<Departamento> {
 
-  private final String FIND_ALL = "select d.id, d.nombre, d.responsable_id, u.name, u.email  from departamento d join usuario u on d.responsable_id = u.id";
+  private final String FIND_ALL =
+      "select d.id, d.nombre, d.responsable_id, u.name, u.email  from departamento d join usuario u on d.responsable_id = u.id";
 
   private final String FIND_BY_ID = FIND_ALL + " where d.id = ?";
 
   private final String FIND_BY_NOMBRE = FIND_ALL + " where nombre = ?";
 
-  private final String CREATE_DEPARTAMENTO = "insert into departamento (nombre, responsable_id) values" +
-          "(?, ?)";
+  private final String CREATE_DEPARTAMENTO =
+      "insert into departamento (nombre, responsable_id) values" + "(?, ?)";
 
-  private final String UPDATE_DEPARTAMENTO = "update departamento set nombre=?, responsable)id=? where id=?";
-
+  private final String UPDATE_DEPARTAMENTO =
+      "update departamento set nombre=?, responsable)id=? where id=?";
 
   private final String DELETE = "delete from departamento where id = ?";
 
-  private final RowMapper<Departamento> rowMapper = (rs, rowNum) -> {
-    User responsable = User.builder()
-            .id(rs.getInt("responsable_id"))
-            .name(rs.getString("name"))
-            .email(rs.getString("email")).build();
-    return Departamento.builder()
+  private final RowMapper<Departamento> rowMapper =
+      (rs, rowNum) -> {
+        User responsable =
+            User.builder()
+                .id(rs.getInt("responsable_id"))
+                .name(rs.getString("name"))
+                .email(rs.getString("email"))
+                .build();
+        return Departamento.builder()
             .id(rs.getInt("id"))
             .nombre(rs.getString("nombre"))
-            .responsable(responsable).build();
-  };
+            .responsable(responsable)
+            .build();
+      };
 
   public DepartamentoRepository(JdbcTemplate template) {
     super(template);
@@ -59,7 +62,7 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
     try {
       Departamento departamento = template.queryForObject(FIND_BY_ID, rowMapper, id);
       return Optional.ofNullable(departamento);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -68,7 +71,7 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
     try {
       Departamento departamento = template.queryForObject(FIND_BY_NOMBRE, rowMapper, nombre);
       return Optional.ofNullable(departamento);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -79,7 +82,11 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
       departamento.setId(id);
       return departamento;
     }
-    template.update(UPDATE_DEPARTAMENTO, departamento.getNombre(), departamento.getResponsable().getId(), departamento.getId());
+    template.update(
+        UPDATE_DEPARTAMENTO,
+        departamento.getNombre(),
+        departamento.getResponsable().getId(),
+        departamento.getId());
     return departamento;
   }
 

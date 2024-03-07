@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
 import org.puravidagourmet.api.domain.entity.Producto;
 import org.puravidagourmet.api.domain.entity.TipoProducto;
 import org.puravidagourmet.api.domain.enums.FormatoCompra;
@@ -17,26 +16,35 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ProductoRepository extends BaseRepository<Producto> {
 
-  private final String FIND_ALL = "select p.id, p.cantidad_por_unidad, p.coste_unitario, p.formato_compra, p.nombre, p.porcentaje_merma, p.precio_de_compra, p.proveedor, " +
-          "p.unidad_medida , p.tipo_producto_id, tp.nombre as nombreTipoProducto, tp.ubicacion  from producto p " +
-          "join tipo_producto tp on p.tipo_producto_id = tp.id ";
+  private final String FIND_ALL =
+      "select p.id, p.cantidad_por_unidad, p.coste_unitario, p.formato_compra, p.nombre, p.porcentaje_merma, "
+          + "p.precio_de_compra, p.proveedor, p.unidad_medida , p.tipo_producto_id, tp.nombre as nombreTipoProducto, "
+          + "tp.ubicacion  from producto p "
+          + "join tipo_producto tp on p.tipo_producto_id = tp.id ";
 
   private final String FIND_BY_NOMBRE = FIND_ALL + " where p.nombre = ?";
 
   private final String FIND_BY_ID = FIND_ALL + " where p.id = ?";
 
-  private final String CREATE_RECETA_CATEGORIA = "insert into producto (cantidad_por_unidad, coste_unitario, formato_compra, nombre, porcentaje_merma, precio_de_compra, proveedor, unidad_medida, tipo_producto_id) " +
-          "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+  private final String CREATE_RECETA_CATEGORIA =
+      "insert into producto (cantidad_por_unidad, coste_unitario, formato_compra, nombre, porcentaje_merma, "
+          + "precio_de_compra, proveedor, unidad_medida, tipo_producto_id) "
+          + "values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-  private final String UPDATE_RECETA_CATEGORIA = "update producto set cantidad_por_unidad=?, coste_unitario=?, formato_compra=?, nombre=?, porcentaje_merma=?, precio_de_compra=?, proveedor=?, unidad_medida=?, tipo_producto_id=? where id=?";
+  private final String UPDATE_RECETA_CATEGORIA =
+      "update producto set cantidad_por_unidad=?, coste_unitario=?, formato_compra=?, nombre=?, "
+          + "porcentaje_merma=?, precio_de_compra=?, proveedor=?, unidad_medida=?, tipo_producto_id=? where id=?";
 
   private final String DELETE = "delete from producto where id = ?";
 
-  private final RowMapper<Producto> rowMapper = (rs, rowNum) -> {
-    TipoProducto tipoProducto = TipoProducto.builder()
-            .id(rs.getLong("tipo_producto_id"))
-            .nombre(rs.getString("nombreTipoProducto"))
-            .ubicacion(rs.getString("ubicacion")).build();
+  private final RowMapper<Producto> rowMapper =
+      (rs, rowNum) -> {
+        TipoProducto tipoProducto =
+            TipoProducto.builder()
+                .id(rs.getLong("tipo_producto_id"))
+                .nombre(rs.getString("nombreTipoProducto"))
+                .ubicacion(rs.getString("ubicacion"))
+                .build();
         return Producto.builder()
             .id(rs.getInt("id"))
             .cantidadPorUnidad(rs.getLong("cantidad_por_unidad"))
@@ -49,7 +57,7 @@ public class ProductoRepository extends BaseRepository<Producto> {
             .unidadMedida(UnidadMedidas.getUnidadMedida(rs.getInt("unidad_medida")))
             .tipoProducto(tipoProducto)
             .build();
-  };
+      };
 
   public ProductoRepository(JdbcTemplate template) {
     super(template);
@@ -76,7 +84,7 @@ public class ProductoRepository extends BaseRepository<Producto> {
     try {
       Producto producto = template.queryForObject(FIND_BY_NOMBRE, rowMapper, nombre);
       return Optional.ofNullable(producto);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -85,7 +93,7 @@ public class ProductoRepository extends BaseRepository<Producto> {
     try {
       Producto producto = template.queryForObject(FIND_BY_ID, rowMapper, id);
       return Optional.ofNullable(producto);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -96,17 +104,18 @@ public class ProductoRepository extends BaseRepository<Producto> {
       producto.setId(id);
       return producto;
     }
-    template.update(UPDATE_RECETA_CATEGORIA,
-            producto.getCantidadPorUnidad(),
-            producto.getCosteUnitario(),
-            producto.getFormatoCompra().ordinal(),
-            producto.getNombre(),
-            producto.getPorcentajeMerma(),
-            producto.getPrecioDeCompra(),
-            producto.getProveedor(),
-            producto.getUnidadMedida().ordinal(),
-            producto.getTipoProducto().getId(),
-            producto.getId());
+    template.update(
+        UPDATE_RECETA_CATEGORIA,
+        producto.getCantidadPorUnidad(),
+        producto.getCosteUnitario(),
+        producto.getFormatoCompra().ordinal(),
+        producto.getNombre(),
+        producto.getPorcentajeMerma(),
+        producto.getPrecioDeCompra(),
+        producto.getProveedor(),
+        producto.getUnidadMedida().ordinal(),
+        producto.getTipoProducto().getId(),
+        producto.getId());
     return producto;
   }
 

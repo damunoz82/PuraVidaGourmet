@@ -6,14 +6,17 @@ import org.puravidagourmet.api.db.repository.TipoProductoRepository;
 import org.puravidagourmet.api.domain.entity.TipoProducto;
 import org.puravidagourmet.api.domain.pojo.TipoProductoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TipoProductoService {
 
-  @Autowired private TipoProductoRepository tipoProductoRepository;
+  private final TipoProductoRepository tipoProductoRepository;
+
+  public TipoProductoService(TipoProductoRepository tipoProductoRepository) {
+    this.tipoProductoRepository = tipoProductoRepository;
+  }
 
   @Transactional
   public TipoProducto saveTipoProducto(TipoProducto tipoProducto) {

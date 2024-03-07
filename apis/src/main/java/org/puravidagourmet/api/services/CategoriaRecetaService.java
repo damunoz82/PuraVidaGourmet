@@ -6,14 +6,17 @@ import org.puravidagourmet.api.db.repository.CategoriaRecetaRepository;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.pojo.CategoriaRecetaPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoriaRecetaService {
 
-  @Autowired private CategoriaRecetaRepository categoriaRecetaRepository;
+  private final CategoriaRecetaRepository categoriaRecetaRepository;
+
+  public CategoriaRecetaService(CategoriaRecetaRepository categoriaRecetaRepository) {
+    this.categoriaRecetaRepository = categoriaRecetaRepository;
+  }
 
   @Transactional
   public CategoriaReceta saveCategoriaReceta(CategoriaReceta tipoProducto) {

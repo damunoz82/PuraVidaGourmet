@@ -22,8 +22,7 @@ public class Producto {
 
   private long id;
 
-  @NotEmpty
-  private String nombre;
+  @NotEmpty private String nombre;
 
   @NotEmpty private String proveedor;
 

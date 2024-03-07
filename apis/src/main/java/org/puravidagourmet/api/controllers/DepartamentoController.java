@@ -8,12 +8,9 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.puravidagourmet.api.domain.entity.Departamento;
 import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
-import org.puravidagourmet.api.domain.pojo.ProductoPojo;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.mappers.DepartamentoMapper;
 import org.puravidagourmet.api.services.DepartamentoService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,87 +28,66 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/departamento", produces = "application/json")
 public class DepartamentoController extends BaseController {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(DepartamentoController.class);
-  @Autowired private DepartamentoService departamentoService;
+  //  private static final Logger LOGGER = LoggerFactory.getLogger(DepartamentoController.class);
+  private final DepartamentoService departamentoService;
 
-  @Autowired private DepartamentoMapper mapper;
+  private final DepartamentoMapper mapper;
+
+  public DepartamentoController(
+      DepartamentoService departamentoService, DepartamentoMapper mapper) {
+    this.departamentoService = departamentoService;
+    this.mapper = mapper;
+  }
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
   public List<DepartamentoPojo> getAll() {
-    try {
-      LOGGER.info("START: getAll");
-      return mapper.toDepartamentoPojo(departamentoService.getAll()).stream()
-              .sorted(Comparator.comparing((DepartamentoPojo::getNombre)))
-              .collect(Collectors.toList());
-
-    } finally {
-      LOGGER.info("END: getAll");
-    }
+    return mapper.toDepartamentoPojo(departamentoService.getAll()).stream()
+        .sorted(Comparator.comparing((DepartamentoPojo::getNombre)))
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public DepartamentoPojo get(@PathVariable long id) {
-    try {
-      LOGGER.info("START: get with id: {}", id);
-      Optional<Departamento> result = departamentoService.getDepartamento(id);
-      return mapper.toDepartamentoPojo(
-          result.orElseThrow(() -> new ResourceNotFoundException("Departamento", "id", id)));
-    } finally {
-      LOGGER.info("END: get with id: {}", id);
-    }
+    Optional<Departamento> result = departamentoService.getDepartamento(id);
+    return mapper.toDepartamentoPojo(
+        result.orElseThrow(() -> new ResourceNotFoundException("Departamento", "id", id)));
   }
 
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(@RequestBody @Valid DepartamentoPojo departamento) {
-    try {
-      LOGGER.info("START: create with id: {}", departamento);
-      departamentoService.validateSave(departamento);
+    departamentoService.validateSave(departamento);
 
-      Departamento result =
-          departamentoService.saveDepartamento(mapper.toDepartamento(departamento));
+    Departamento result = departamentoService.saveDepartamento(mapper.toDepartamento(departamento));
 
-      return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
-    } finally {
-      LOGGER.info("END: create with id: {}", departamento);
-    }
+    return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> update(
       @PathVariable long id, @RequestBody DepartamentoPojo departamentoPojo) {
-    try {
-      LOGGER.info("START: Update with id: {}, and Tipo Producto: {}", id, departamentoPojo);
-      departamentoPojo.setId(id);
+    departamentoPojo.setId(id);
 
-      // check exists.
-      if (departamentoService.getDepartamento(id).isEmpty()) {
-        throw new ResourceNotFoundException("Departamento", "id", id);
-      }
-
-      departamentoService.validateUpdate(departamentoPojo);
-
-      departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));
-
-      URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-      return ResponseEntity.noContent().location(location).build();
-    } finally {
-      LOGGER.info("END: Update with id: {}, and Tipo Producto: {}", id, departamentoPojo);
+    // check exists.
+    if (departamentoService.getDepartamento(id).isEmpty()) {
+      throw new ResourceNotFoundException("Departamento", "id", id);
     }
+
+    departamentoService.validateUpdate(departamentoPojo);
+
+    departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void delete(@PathVariable long id) {
-    try {
-      LOGGER.info("START: delete with id: {}", id);
-      departamentoService.validateDelete(id);
-      departamentoService.deleteById(id);
-    } finally {
-      LOGGER.info("END: delete with id: {}", id);
-    }
+    departamentoService.validateDelete(id);
+    departamentoService.deleteById(id);
   }
 }

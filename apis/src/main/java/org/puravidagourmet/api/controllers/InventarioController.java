@@ -1,42 +1,78 @@
 package org.puravidagourmet.api.controllers;
 
-import org.puravidagourmet.api.domain.User;
+import java.net.URI;
+import java.util.List;
+import javax.validation.Valid;
+import org.puravidagourmet.api.config.security.CurrentUser;
+import org.puravidagourmet.api.config.security.UserPrincipal;
+import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Inventario;
+import org.puravidagourmet.api.domain.enums.EstadoInventario;
 import org.puravidagourmet.api.domain.pojo.InventarioPojo;
+import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.mappers.InventarioMapper;
 import org.puravidagourmet.api.services.InventarioService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/inventario")
-public class InventarioController {
+public class InventarioController extends BaseController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+  private final InventarioService inventarioService;
 
-//    @Autowired
-    private InventarioService inventarioService;
+  private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private InventarioMapper mapper;
+  private final InventarioMapper mapper;
 
-    @GetMapping
-    @PreAuthorize("hasRole ('ADMIN')")
-    public List<InventarioPojo> getAll() {
-        try {
-            LOGGER.info("START: getAll");
-            return mapper.toInventarioPojo(inventarioService.getAll());
-        }finally {
-            LOGGER.info("END: getAll");
-        }
-    }
+  public InventarioController(
+      InventarioService inventarioService,
+      UsuarioRepository usuarioRepository,
+      InventarioMapper mapper) {
+    this.inventarioService = inventarioService;
+    this.usuarioRepository = usuarioRepository;
+    this.mapper = mapper;
+  }
+
+  @GetMapping
+  @PreAuthorize("hasRole ('ADMIN')")
+  public List<InventarioPojo> getAll() {
+    return mapper.toInventarioPojo(inventarioService.getAll());
+  }
+
+  @GetMapping("/{id}")
+  @PreAuthorize("hasRole ('ADMIN')")
+  public InventarioPojo get(@PathVariable long id) {
+    return mapper.toInventarioPojo(
+        inventarioService
+            .getById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Inventario", "id", id)));
+  }
+
+  @PostMapping
+  @PreAuthorize("hasRole ('ADMIN')")
+  public ResponseEntity<String> create(
+      @RequestBody @Valid InventarioPojo inventarioPojo, @CurrentUser UserPrincipal userPrincipal) {
+    Inventario inventario = mapper.toInventario(inventarioPojo);
+    inventario.setEstado(EstadoInventario.CREADO);
+    inventario.setResponsable(
+        usuarioRepository
+            .findByEmail(userPrincipal.getName())
+            .orElseThrow(() -> new BadRequestException("Usuario que registra no fue encontrado")));
+    inventarioService.createInventario(inventario);
+    return ResponseEntity.created(createLocation(String.valueOf(inventario.getId()))).build();
+  }
+
+  @PostMapping("/{id}/cancel")
+  @PreAuthorize(("hasRole ('ADMIN')"))
+  public ResponseEntity<String> cancel(
+      @PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
+    inventarioService.cancel(id, userPrincipal);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
+  }
 }

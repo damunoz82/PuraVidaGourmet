@@ -13,12 +13,11 @@ public class UserPrincipal implements OAuth2User, UserDetails {
   /** */
   private static final long serialVersionUID = -8309183157087871563L;
 
-  private String email;
-  private String password;
-  private Collection<? extends GrantedAuthority> authorities;
+  private final String email;
+  private final String password;
+  private final Collection<? extends GrantedAuthority> authorities;
+  private final boolean enabled;
   private Map<String, Object> attributes;
-
-  private boolean enabled;
 
   public UserPrincipal(
       String email,

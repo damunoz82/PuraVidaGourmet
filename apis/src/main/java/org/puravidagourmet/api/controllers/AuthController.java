@@ -1,26 +1,24 @@
 package org.puravidagourmet.api.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.enums.AuthProvider;
+import org.puravidagourmet.api.domain.enums.RoleProvider;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.payload.ApiResponse;
 import org.puravidagourmet.api.payload.AuthResponse;
 import org.puravidagourmet.api.payload.LoginRequest;
 import org.puravidagourmet.api.payload.SignUpRequest;
 import org.puravidagourmet.api.services.TokenService;
-import org.puravidagourmet.api.domain.enums.AuthProvider;
-import org.puravidagourmet.api.domain.enums.RoleProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,90 +33,103 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/auth")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+  private final AuthenticationManager authenticationManager;
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+  private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private TokenService tokenService;
+  private final TokenService tokenService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+  public AuthController(
+      AuthenticationManager authenticationManager,
+      UsuarioRepository usuarioRepository,
+      PasswordEncoder passwordEncoder,
+      TokenService tokenService) {
+    this.authenticationManager = authenticationManager;
+    this.usuarioRepository = usuarioRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.tokenService = tokenService;
+  }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getEmail(),
-                        loginRequest.getPassword()
-                )
-        );
+  @PostMapping("/login")
+  public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    Authentication authentication =
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(
+                loginRequest.getEmail(), loginRequest.getPassword()));
+    SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+    final String token = tokenService.createToken((UserPrincipal) authentication.getPrincipal());
+    final String refreshToken =
+        tokenService.createRefreshToken((UserPrincipal) authentication.getPrincipal());
+    return ResponseEntity.ok(
+        AuthResponse.builder()
+            .userName(authentication.getName())
+            .createdAt(new Date())
+            .accessToken(token)
+            .refreshToken(refreshToken)
+            .tokenType("Bearer")
+            .build());
+  }
 
-        final String token = tokenService.createToken((UserPrincipal) authentication.getPrincipal());
-        final String refreshToken = tokenService.createRefreshToken((UserPrincipal) authentication.getPrincipal());
-        return ResponseEntity.ok(AuthResponse.builder()
-                        .userName(authentication.getName())
-                        .createdAt(new Date())
-                .accessToken(token)
+  @PostMapping("/refresh-token")
+  public void refreshToken(HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    final String refreshToken;
+    final String email;
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      return;
+    }
+    refreshToken = authHeader.substring(7);
+    email = tokenService.getUserIdFromToken(refreshToken);
+    if (email != null) {
+      User user = usuarioRepository.findByEmail(email).orElseThrow();
+      if (tokenService.validateToken(refreshToken) && user.isEnabled()) {
+        String accessToken =
+            tokenService.createToken(
+                new UserPrincipal(user.getEmail(), user.getPassword(), null, user.isEnabled()));
+        AuthResponse authResponse =
+            AuthResponse.builder()
+                .userName(user.getEmail())
+                .createdAt(new Date())
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                        .tokenType("Bearer")
-                .build());
+                .tokenType("Bearer")
+                .build();
+        new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+      }
+    }
+  }
+
+  @PostMapping("/signup")
+  public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
+    if (usuarioRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
+      throw new BadRequestException("Email address already in use.");
     }
 
-    @PostMapping("/refresh-token")
-    public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
-        final String email;
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
-        }
-        refreshToken = authHeader.substring(7);
-        email = tokenService.getUserIdFromToken(refreshToken);
-        if (email != null) {
-            User user = usuarioRepository.findByEmail(email).orElseThrow();
-            if (tokenService.validateToken(refreshToken) && user.isEnabled()) {
-                String accessToken = tokenService.createToken(new UserPrincipal(user.getEmail(), user.getPassword(), null, user.isEnabled()));
-                AuthResponse authResponse = AuthResponse.builder()
-                        .userName(user.getEmail())
-                        .createdAt(new Date())
-                        .accessToken(accessToken)
-                        .refreshToken(refreshToken)
-                        .tokenType("Bearer")
-                        .build();
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
-            }
-        }
-    }
+    // Creating user's account
+    User user = new User();
+    user.setName(signUpRequest.getName());
+    user.setEmail(signUpRequest.getEmail());
+    user.setPassword(signUpRequest.getPassword());
+    user.setProvider(AuthProvider.LOCAL);
+    user.setRoles(
+        List.of(
+            RoleProvider.ROLE_USER)); // DEFAULT USER ROLE...  OTHER ROLES ARE GRANTED PER REQUEST.
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if(usuarioRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
-            throw new BadRequestException("Email address already in use.");
-        }
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Creating user's account
-        User user = new User();
-        user.setName(signUpRequest.getName());
-        user.setEmail(signUpRequest.getEmail());
-        user.setPassword(signUpRequest.getPassword());
-        user.setProvider(AuthProvider.LOCAL);
-        user.setRoles(List.of(RoleProvider.ROLE_USER));   // DEFAULT USER ROLE...  OTHER ROLES ARE GRANTED PER REQUEST.
+    User result = usuarioRepository.save(user);
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+    URI location =
+        ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/user/me")
+            .buildAndExpand(result.getEmail())
+            .toUri();
 
-        User result = usuarioRepository.save(user);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentContextPath().path("/user/me")
-                .buildAndExpand(result.getEmail()).toUri();
-
-        return ResponseEntity.created(location)
-                .body(new ApiResponse(true, "User registered successfully"));
-    }
+    return ResponseEntity.created(location)
+        .body(new ApiResponse(true, "User registered successfully"));
+  }
 }
