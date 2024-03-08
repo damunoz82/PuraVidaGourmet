@@ -1,6 +1,6 @@
 package org.puravidagourmet.api.domain.pojo;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserPojo {
+public class UsuarioPojo {
 
   private String name;
 

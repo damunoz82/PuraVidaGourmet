@@ -6,7 +6,7 @@ import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.config.security.oauth2.user.OAuth2UserInfo;
 import org.puravidagourmet.api.config.security.oauth2.user.OAuth2UserInfoFactory;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
 import org.puravidagourmet.api.exceptions.OAuth2AuthenticationProcessingException;
@@ -53,47 +53,49 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
       throw new OAuth2AuthenticationProcessingException("Email not found from OAuth2 provider");
     }
 
-    Optional<User> userOptional = usuarioRepository.findByEmail(oAuth2UserInfo.getEmail());
-    User user;
+    Optional<Usuario> userOptional = usuarioRepository.findByEmail(oAuth2UserInfo.getEmail());
+    Usuario usuario;
     if (userOptional.isPresent()) {
-      user = userOptional.get();
-      if (!user.getProvider()
+      usuario = userOptional.get();
+      if (!usuario
+          .getProvider()
           .equals(
               AuthProvider.valueOf(
                   oAuth2UserRequest.getClientRegistration().getRegistrationId()))) {
         throw new OAuth2AuthenticationProcessingException(
             "Looks like you're signed up with "
-                + user.getProvider()
+                + usuario.getProvider()
                 + " account. Please use your "
-                + user.getProvider()
+                + usuario.getProvider()
                 + " account to login.");
       }
-      user = updateExistingUser(user, oAuth2UserInfo);
+      usuario = updateExistingUser(usuario, oAuth2UserInfo);
     } else {
-      user = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+      usuario = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
     }
 
-    return UserPrincipal.create(user, oAuth2User.getAttributes());
+    return UserPrincipal.create(usuario, oAuth2User.getAttributes());
   }
 
-  private User registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
-    User user = new User();
+  private Usuario registerNewUser(
+      OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
+    Usuario usuario = new Usuario();
 
-    user.setProvider(
+    usuario.setProvider(
         AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
-    user.setProviderId(oAuth2UserInfo.getId());
-    user.setName(oAuth2UserInfo.getName());
-    user.setEmail(oAuth2UserInfo.getEmail());
+    usuario.setProviderId(oAuth2UserInfo.getId());
+    usuario.setName(oAuth2UserInfo.getName());
+    usuario.setEmail(oAuth2UserInfo.getEmail());
     //        user.setImageUrl(oAuth2UserInfo.getImageUrl());
-    user.setRoles(
+    usuario.setRoles(
         List.of(
             RoleProvider.ROLE_USER)); // DEFAULT USER ROLE...  OTHER ROLES ARE GRANTED PER REQUEST.
-    return usuarioRepository.save(user);
+    return usuarioRepository.save(usuario);
   }
 
-  private User updateExistingUser(User existingUser, OAuth2UserInfo oAuth2UserInfo) {
-    existingUser.setName(oAuth2UserInfo.getName());
+  private Usuario updateExistingUser(Usuario existingUsuario, OAuth2UserInfo oAuth2UserInfo) {
+    existingUsuario.setName(oAuth2UserInfo.getName());
     //        existingUser.setImageUrl(oAuth2UserInfo.getImageUrl());
-    return usuarioRepository.save(existingUser);
+    return usuarioRepository.save(existingUsuario);
   }
 }

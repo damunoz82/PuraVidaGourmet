@@ -3,7 +3,7 @@ package org.puravidagourmet.api.config.security;
 import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,18 +30,18 @@ public class UserPrincipal implements OAuth2User, UserDetails {
     this.enabled = enabled;
   }
 
-  public static UserPrincipal create(User user) {
+  public static UserPrincipal create(Usuario usuario) {
     return new UserPrincipal(
-        user.getEmail(),
-        user.getPassword(),
-        user.getRoles().stream()
+        usuario.getEmail(),
+        usuario.getPassword(),
+        usuario.getRoles().stream()
             .map(m -> new SimpleGrantedAuthority(m.name()))
             .collect(Collectors.toList()),
-        user.isEnabled());
+        usuario.isEnabled());
   }
 
-  public static UserPrincipal create(User user, Map<String, Object> attributes) {
-    UserPrincipal userPrincipal = UserPrincipal.create(user);
+  public static UserPrincipal create(Usuario usuario, Map<String, Object> attributes) {
+    UserPrincipal userPrincipal = UserPrincipal.create(usuario);
     userPrincipal.setAttributes(attributes);
     return userPrincipal;
   }

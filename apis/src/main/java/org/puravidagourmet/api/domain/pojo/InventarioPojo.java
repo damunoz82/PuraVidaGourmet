@@ -24,9 +24,9 @@ public class InventarioPojo {
 
   private DepartamentoPojo departamento;
 
-  private UserPojo responsable;
+  private UsuarioPojo responsable;
 
-  private UserPojo usuarioModifica;
+  private UsuarioPojo usuarioModifica;
 
   private String periodoMeta;
 

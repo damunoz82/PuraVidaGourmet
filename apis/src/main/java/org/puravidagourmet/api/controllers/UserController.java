@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class UserController {
 
   @GetMapping("/me")
   @PreAuthorize("hasRole('USER')")
-  public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+  public Usuario getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
     return usuarioRepository
         .findByEmail(userPrincipal.getName())
         .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getName()));
@@ -46,15 +46,15 @@ public class UserController {
 
   @GetMapping
   @PreAuthorize("hasRole ('ADMIN')")
-  public List<User> getAll() {
+  public List<Usuario> getAll() {
     return usuarioRepository.findAll().stream()
-        .sorted(Comparator.comparing((User::getName)))
+        .sorted(Comparator.comparing((Usuario::getName)))
         .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole ('ADMIN')")
-  public User get(@PathVariable long id) {
+  public Usuario get(@PathVariable long id) {
     return usuarioRepository
         .findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
@@ -62,34 +62,34 @@ public class UserController {
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<String> update(@PathVariable long id, @RequestBody User user) {
-    user.setId(id);
+  public ResponseEntity<String> update(@PathVariable long id, @RequestBody Usuario usuario) {
+    usuario.setId(id);
 
     // get unchanged user from DB.
-    Optional<User> dbUser = usuarioRepository.findById(id);
+    Optional<Usuario> dbUser = usuarioRepository.findById(id);
 
     // check exists.
     if (dbUser.isEmpty()) {
       throw new ResourceNotFoundException("Usuario", "id", id);
     }
 
-    User dbUsuario = dbUser.get();
+    Usuario dbUsuario = dbUser.get();
 
     // check if email changed:
-    if (!dbUsuario.getEmail().equals(user.getEmail())) {
-      if (usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
+    if (!dbUsuario.getEmail().equals(usuario.getEmail())) {
+      if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
         throw new BadRequestException("Ya existe un usuario con ese correo electronico.");
       }
     }
 
     // check if new password
-    if (!Strings.isNullOrEmpty(user.getPassword())) {
-      user.setPassword(passwordEncoder.encode(user.getPassword()));
+    if (!Strings.isNullOrEmpty(usuario.getPassword())) {
+      usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
     } else {
-      user.setPassword(dbUser.get().getPassword());
+      usuario.setPassword(dbUser.get().getPassword());
     }
 
-    usuarioRepository.save(user);
+    usuarioRepository.save(usuario);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
     return ResponseEntity.noContent().location(location).build();
@@ -101,18 +101,18 @@ public class UserController {
       @PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
 
     // check user exists in the DB
-    User dbUser =
+    Usuario dbUsuario =
         usuarioRepository
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
 
-    if (dbUser != null && dbUser.getEmail().equals(userPrincipal.getName())) {
+    if (dbUsuario != null && dbUsuario.getEmail().equals(userPrincipal.getName())) {
       throw new BadRequestException("Tu no puedes desactivar tu propia cuenta.");
     }
-    assert dbUser != null;
-    dbUser.setEnabled(false);
+    assert dbUsuario != null;
+    dbUsuario.setEnabled(false);
 
-    usuarioRepository.save(dbUser);
+    usuarioRepository.save(dbUsuario);
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
     return ResponseEntity.noContent().location(location).build();
   }

@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.controllers.UserController;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
 import org.slf4j.Logger;
@@ -26,17 +26,17 @@ public class DataPopulationTool implements CommandLineRunner {
     try {
       LOGGER.info("START - checking if needed db data is present.");
 
-      Optional<User> adminUser = usuarioRepository.findByEmail("dmunoz.hon@gmail.com");
+      Optional<Usuario> adminUser = usuarioRepository.findByEmail("dmunoz.hon@gmail.com");
       if (adminUser.isEmpty()) {
-        User user = new User();
-        user.setName("Admin");
-        user.setEmail("dmunoz.hon@gmail.com");
-        user.setPassword(passwordEncoder.encode("password"));
-        user.setProvider(AuthProvider.LOCAL);
-        user.setEnabled(true);
-        user.setRoles(List.of(RoleProvider.ROLE_USER, RoleProvider.ROLE_ADMIN));
+        Usuario usuario = new Usuario();
+        usuario.setName("Admin");
+        usuario.setEmail("dmunoz.hon@gmail.com");
+        usuario.setPassword(passwordEncoder.encode("password"));
+        usuario.setProvider(AuthProvider.LOCAL);
+        usuario.setEnabled(true);
+        usuario.setRoles(List.of(RoleProvider.ROLE_USER, RoleProvider.ROLE_ADMIN));
 
-        usuarioRepository.save(user);
+        usuarioRepository.save(usuario);
       }
     } finally {
       LOGGER.info("END - checking if needed db data is present.");

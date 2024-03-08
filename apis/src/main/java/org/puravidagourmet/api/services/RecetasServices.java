@@ -8,10 +8,10 @@ import org.puravidagourmet.api.db.repository.IngredienteRepository;
 import org.puravidagourmet.api.db.repository.ProductoRepository;
 import org.puravidagourmet.api.db.repository.RecetaRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.Ingrediente;
 import org.puravidagourmet.api.domain.entity.Producto;
 import org.puravidagourmet.api.domain.entity.Receta;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.utils.MathUtils;
@@ -44,7 +44,7 @@ public class RecetasServices {
   public Receta saveReceta(Receta receta, UserPrincipal userPrincipal) {
 
     // get current user
-    Optional<User> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
+    Optional<Usuario> user = usuarioRepository.findByEmail(userPrincipal.getUsername());
 
     // if updating
     if (receta.getId() > 0) {
@@ -100,11 +100,12 @@ public class RecetasServices {
   }
 
   public void delete(long id) {
+    validateDelete(id);
     ingredienteRepository.deleteForReceta(id);
     recetaRepository.delete(id);
   }
 
-  public void validateSave(Receta receta) {
+  private void validateSave(Receta receta) {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent()) {
@@ -114,7 +115,7 @@ public class RecetasServices {
     validateIngredientes(receta.getIngredientes());
   }
 
-  public void validateUpdate(Receta receta) {
+  private void validateUpdate(Receta receta) {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent() && dbReceta.get().getId() != receta.getId()) {
@@ -125,7 +126,7 @@ public class RecetasServices {
     validateIngredientes(receta.getIngredientes());
   }
 
-  public void validateDelete(long id) {
+  private void validateDelete(long id) {
     // fixme finish
     // check if receta is been used in any menu.
   }

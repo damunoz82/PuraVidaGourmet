@@ -1,11 +1,11 @@
 package org.puravidagourmet.api.controllers;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import org.puravidagourmet.api.domain.entity.Departamento;
 import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
@@ -57,7 +57,7 @@ public class DepartamentoController extends BaseController {
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(@RequestBody @Valid DepartamentoPojo departamento) {
-    //    departamentoService.validateSave(departamento);
+    departamento.setId(0);
 
     Departamento result = departamentoService.saveDepartamento(mapper.toDepartamento(departamento));
 
@@ -75,8 +75,6 @@ public class DepartamentoController extends BaseController {
       throw new ResourceNotFoundException("Departamento", "id", id);
     }
 
-    //    departamentoService.validateUpdate(departamentoPojo);
-
     departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
@@ -86,7 +84,6 @@ public class DepartamentoController extends BaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void delete(@PathVariable long id) {
-    departamentoService.validateDelete(id);
     departamentoService.deleteById(id);
   }
 }

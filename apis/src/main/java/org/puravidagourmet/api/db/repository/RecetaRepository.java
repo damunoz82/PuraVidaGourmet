@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.entity.Receta;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -48,14 +48,14 @@ public class RecetaRepository extends BaseRepository<Receta> {
 
   private final RowMapper<Receta> rowMapper =
       (rs, rowNum) -> {
-        User usuarioModifica =
-            User.builder()
+        Usuario usuarioModifica =
+            Usuario.builder()
                 .id(rs.getLong("usuario_modifica_id"))
                 .name(rs.getString("modifica_name"))
                 .email(rs.getString("modifica_email"))
                 .build();
-        User usuarioRegistra =
-            User.builder()
+        Usuario usuarioRegistra =
+            Usuario.builder()
                 .id(rs.getLong("usuario_registra_id"))
                 .name(rs.getString("registra_name"))
                 .email(rs.getString("registra_email"))

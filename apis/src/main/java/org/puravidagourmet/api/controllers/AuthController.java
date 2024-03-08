@@ -3,14 +3,14 @@ package org.puravidagourmet.api.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import javax.validation.Valid;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
 import org.puravidagourmet.api.exceptions.BadRequestException;
@@ -85,14 +85,15 @@ public class AuthController {
     refreshToken = authHeader.substring(7);
     email = tokenService.getUserIdFromToken(refreshToken);
     if (email != null) {
-      User user = usuarioRepository.findByEmail(email).orElseThrow();
-      if (tokenService.validateToken(refreshToken) && user.isEnabled()) {
+      Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow();
+      if (tokenService.validateToken(refreshToken) && usuario.isEnabled()) {
         String accessToken =
             tokenService.createToken(
-                new UserPrincipal(user.getEmail(), user.getPassword(), null, user.isEnabled()));
+                new UserPrincipal(
+                    usuario.getEmail(), usuario.getPassword(), null, usuario.isEnabled()));
         AuthResponse authResponse =
             AuthResponse.builder()
-                .userName(user.getEmail())
+                .userName(usuario.getEmail())
                 .createdAt(new Date())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -110,18 +111,18 @@ public class AuthController {
     }
 
     // Creating user's account
-    User user = new User();
-    user.setName(signUpRequest.getName());
-    user.setEmail(signUpRequest.getEmail());
-    user.setPassword(signUpRequest.getPassword());
-    user.setProvider(AuthProvider.LOCAL);
-    user.setRoles(
+    Usuario usuario = new Usuario();
+    usuario.setName(signUpRequest.getName());
+    usuario.setEmail(signUpRequest.getEmail());
+    usuario.setPassword(signUpRequest.getPassword());
+    usuario.setProvider(AuthProvider.LOCAL);
+    usuario.setRoles(
         List.of(
             RoleProvider.ROLE_USER)); // DEFAULT USER ROLE...  OTHER ROLES ARE GRANTED PER REQUEST.
 
-    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-    User result = usuarioRepository.save(user);
+    Usuario result = usuarioRepository.save(usuario);
 
     URI location =
         ServletUriComponentsBuilder.fromCurrentContextPath()

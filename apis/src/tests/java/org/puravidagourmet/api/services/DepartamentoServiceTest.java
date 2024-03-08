@@ -10,8 +10,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.puravidagourmet.api.db.repository.DepartamentoRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.Departamento;
+import org.puravidagourmet.api.domain.entity.Usuario;
 
 public class DepartamentoServiceTest {
 
@@ -50,14 +50,14 @@ public class DepartamentoServiceTest {
     // given
     Departamento expected = createSingleDepartamento();
     when(usuarioRepository.findByEmail(anyString()))
-        .thenReturn(Optional.of(User.builder().email("test@test.com").build()));
+        .thenReturn(Optional.of(Usuario.builder().email("test@test.com").build()));
     when(departamentoRepository.save(any())).thenReturn(expected);
 
     // when
     Departamento result =
         departamentoService.saveDepartamento(
             Departamento.builder()
-                .responsable(User.builder().email("test@test.com").build())
+                .responsable(Usuario.builder().email("test@test.com").build())
                 .build());
 
     // then
@@ -75,7 +75,7 @@ public class DepartamentoServiceTest {
     try {
       departamentoService.saveDepartamento(
           Departamento.builder()
-              .responsable(User.builder().email("test@test.com").build())
+              .responsable(Usuario.builder().email("test@test.com").build())
               .build());
     } catch (Exception e) {
       exception = e;
@@ -91,7 +91,7 @@ public class DepartamentoServiceTest {
     // given
     Departamento expected = createSingleDepartamento();
     when(usuarioRepository.findByEmail(anyString()))
-        .thenReturn(Optional.of(User.builder().email("test@test.com").build()));
+        .thenReturn(Optional.of(Usuario.builder().email("test@test.com").build()));
     when(departamentoRepository.save(any())).thenReturn(expected);
 
     // when
@@ -101,7 +101,7 @@ public class DepartamentoServiceTest {
       result =
           departamentoService.saveDepartamento(
               Departamento.builder()
-                  .responsable(User.builder().email("test@test.com").build())
+                  .responsable(Usuario.builder().email("test@test.com").build())
                   .build());
     } catch (Exception e) {
       exception = e;
@@ -128,7 +128,7 @@ public class DepartamentoServiceTest {
       result =
           departamentoService.saveDepartamento(
               Departamento.builder()
-                  .responsable(User.builder().email("test@test.com").build())
+                  .responsable(Usuario.builder().email("test@test.com").build())
                   .build());
     } catch (Exception e) {
       exception = e;
@@ -145,7 +145,7 @@ public class DepartamentoServiceTest {
     // given
     Departamento expected = createSingleDepartamento();
     when(usuarioRepository.findByEmail(anyString()))
-        .thenReturn(Optional.of(User.builder().email("test@test.com").build()));
+        .thenReturn(Optional.of(Usuario.builder().email("test@test.com").build()));
     when(departamentoRepository.save(any())).thenReturn(expected);
     when(departamentoRepository.findByNombre(any())).thenReturn(createOptionalDepartamento());
 
@@ -180,7 +180,7 @@ public class DepartamentoServiceTest {
           departamentoService.saveDepartamento(
               Departamento.builder()
                   .nombre("test")
-                  .responsable(User.builder().email("test@test.com").build())
+                  .responsable(Usuario.builder().email("test@test.com").build())
                   .build());
     } catch (Exception e) {
       exception = e;
@@ -197,7 +197,7 @@ public class DepartamentoServiceTest {
   }
 
   private Departamento createSingleDepartamento() {
-    User responsable = User.builder().email("test@test.com").name("Test").build();
+    Usuario responsable = Usuario.builder().email("test@test.com").name("Test").build();
     return Departamento.builder().id(1).nombre("test").responsable(responsable).build();
   }
 }

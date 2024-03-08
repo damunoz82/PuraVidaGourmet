@@ -3,10 +3,10 @@ package org.puravidagourmet.api.db.repository;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.Departamento;
 import org.puravidagourmet.api.domain.entity.Inventario;
 import org.puravidagourmet.api.domain.entity.InventarioDetalle;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.EstadoInventario;
 import org.puravidagourmet.api.domain.enums.FormatoCompra;
 import org.puravidagourmet.api.domain.enums.UnidadMedidas;
@@ -20,14 +20,14 @@ public class InventarioRepository extends BaseRepository<Inventario> {
 
   private static final RowMapper<Inventario> inventarioRowMapper =
       (rs, rowNum) -> {
-        User responsable =
-            User.builder()
+        Usuario responsable =
+            Usuario.builder()
                 .id(rs.getLong("responsable_id"))
                 .email(rs.getString("email"))
                 .name(rs.getString("name"))
                 .build();
-        User modifica =
-            User.builder()
+        Usuario modifica =
+            Usuario.builder()
                 .id(rs.getLong("usuario_modifica_id"))
                 .email(rs.getString("uemail"))
                 .name(rs.getString("uname"))

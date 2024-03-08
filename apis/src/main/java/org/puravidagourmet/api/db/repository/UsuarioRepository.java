@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -15,11 +15,11 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class UsuarioRepository extends BaseRepository<User> {
+public class UsuarioRepository extends BaseRepository<Usuario> {
 
-  private static final RowMapper<User> rowMapper =
+  private static final RowMapper<Usuario> rowMapper =
       (rs, rowNum) ->
-          User.builder()
+          Usuario.builder()
               .id(rs.getInt("id"))
               .email(rs.getString("email"))
               .enabled(rs.getBoolean("enabled"))
@@ -46,7 +46,7 @@ public class UsuarioRepository extends BaseRepository<User> {
   }
 
   @Override
-  protected void prepareStatement(PreparedStatement ps, User obj) throws SQLException {
+  protected void prepareStatement(PreparedStatement ps, Usuario obj) throws SQLException {
     ps.setString(1, obj.getEmail());
     ps.setBoolean(2, obj.isEnabled());
     ps.setString(3, obj.getName());
@@ -56,29 +56,29 @@ public class UsuarioRepository extends BaseRepository<User> {
     ps.setString(7, obj.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")));
   }
 
-  public List<User> findAll() {
+  public List<Usuario> findAll() {
     return template.query(FIND_ALL, rowMapper);
   }
 
-  public Optional<User> findByEmail(String email) {
+  public Optional<Usuario> findByEmail(String email) {
     try {
-      User user = template.queryForObject(FIND_BY_EMAIL, rowMapper, email);
-      return Optional.ofNullable(user);
+      Usuario usuario = template.queryForObject(FIND_BY_EMAIL, rowMapper, email);
+      return Optional.ofNullable(usuario);
     } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
 
-  public Optional<User> findById(long id) {
+  public Optional<Usuario> findById(long id) {
     try {
-      User user = template.queryForObject(FIND_BY_ID, rowMapper, id);
-      return Optional.ofNullable(user);
+      Usuario usuario = template.queryForObject(FIND_BY_ID, rowMapper, id);
+      return Optional.ofNullable(usuario);
     } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
 
-  public User save(User usuario) {
+  public Usuario save(Usuario usuario) {
     if (usuario.getId() <= 0) {
       long id = performInsert(CREATE_USER, usuario);
       usuario.setId(id);

@@ -24,7 +24,12 @@ public class InventarioService {
     this.inventarioRepository = inventarioRepository;
   }
 
-  public Inventario createInventario(Inventario inventario) {
+  public Inventario createInventario(Inventario inventario, UserPrincipal userPrincipal) {
+    inventario.setEstado(EstadoInventario.CREADO);
+    inventario.setResponsable(
+        usuarioRepository
+            .findByEmail(userPrincipal.getName())
+            .orElseThrow(() -> new BadRequestException("Usuario que registra no fue encontrado")));
     return inventarioRepository.iniciarInventario(inventario);
   }
 

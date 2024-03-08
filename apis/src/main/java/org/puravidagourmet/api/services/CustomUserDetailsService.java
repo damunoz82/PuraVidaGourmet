@@ -2,8 +2,7 @@ package org.puravidagourmet.api.services;
 
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,12 +22,12 @@ public class CustomUserDetailsService implements UserDetailsService {
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-    User user =
+    Usuario usuario =
         usuarioRepository
             .findByEmail(email)
             .orElseThrow(
                 () -> new UsernameNotFoundException("User not found with email : " + email));
 
-    return UserPrincipal.create(user);
+    return UserPrincipal.create(usuario);
   }
 }

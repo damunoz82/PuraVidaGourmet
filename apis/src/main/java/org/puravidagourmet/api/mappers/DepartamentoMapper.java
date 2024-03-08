@@ -6,7 +6,7 @@ import org.puravidagourmet.api.domain.entity.Departamento;
 import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
 import org.springframework.stereotype.Component;
 
-@Mapper(uses = {UserMapper.class})
+@Mapper(uses = {UsuarioMapper.class})
 @Component
 public interface DepartamentoMapper {
 

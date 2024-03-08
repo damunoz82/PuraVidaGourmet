@@ -1,11 +1,11 @@
 package org.puravidagourmet.api.controllers;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.pojo.CategoriaRecetaPojo;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
@@ -58,7 +58,7 @@ public class CategoriaRecetaController extends BaseController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(
       @RequestBody @Valid CategoriaRecetaPojo categoriaRecetaPojo) {
-    categoriaRecetaService.validateSave(categoriaRecetaPojo);
+    categoriaRecetaPojo.setId(0);
 
     CategoriaReceta result =
         categoriaRecetaService.saveCategoriaReceta(mapper.toCategoriaReceta(categoriaRecetaPojo));
@@ -77,8 +77,6 @@ public class CategoriaRecetaController extends BaseController {
       throw new ResourceNotFoundException("Categoria", "id", id);
     }
 
-    categoriaRecetaService.validateUpdate(categoriaRecetaPojo);
-
     categoriaRecetaService.saveCategoriaReceta(mapper.toCategoriaReceta(categoriaRecetaPojo));
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
@@ -88,7 +86,6 @@ public class CategoriaRecetaController extends BaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void delete(@PathVariable long id) {
-    categoriaRecetaService.validateDelete(id);
     categoriaRecetaService.deleteById(id);
   }
 }

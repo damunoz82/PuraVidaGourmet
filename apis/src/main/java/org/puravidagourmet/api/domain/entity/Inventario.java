@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.enums.EstadoInventario;
 
 @Data
@@ -29,9 +28,9 @@ public class Inventario {
 
   private Departamento departamento;
 
-  private User responsable;
+  private Usuario responsable;
 
-  private User usuarioModifica;
+  private Usuario usuarioModifica;
 
   private String periodoMeta;
 

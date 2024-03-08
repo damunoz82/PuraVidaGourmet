@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.ProductoRepository;
 import org.puravidagourmet.api.domain.entity.Producto;
-import org.puravidagourmet.api.domain.pojo.ProductoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.utils.MathUtils;
 import org.springframework.stereotype.Service;
@@ -20,12 +19,18 @@ public class ProductoService {
   }
 
   public void deleteById(long id) {
+    validateDelete(id);
     productoRepository.delete(id);
   }
 
   @Transactional
   public Producto saveProducto(Producto producto) {
     try {
+      if (producto.getId() <= 0) {
+        validateSave(producto);
+      } else {
+        validateUpdate(producto);
+      }
 
       // calcular coste final de producto
       calcularCosteFinalDeProducto(producto);
@@ -46,7 +51,7 @@ public class ProductoService {
     return productoRepository.findAll();
   }
 
-  public void validateSave(ProductoPojo producto) {
+  private void validateSave(Producto producto) {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent()) {
@@ -54,7 +59,7 @@ public class ProductoService {
     }
   }
 
-  public void validateUpdate(ProductoPojo producto) {
+  private void validateUpdate(Producto producto) {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent() && dbProducto.get().getId() != producto.getId()) {
@@ -63,7 +68,7 @@ public class ProductoService {
     }
   }
 
-  public void validateDelete(long producto) {
+  private void validateDelete(long producto) {
     // fixme finish
     // check if ingrediente is been used in any recipe.
   }

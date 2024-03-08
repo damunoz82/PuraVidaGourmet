@@ -1,15 +1,13 @@
 package org.puravidagourmet.api.controllers;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
-import javax.validation.Valid;
 import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Inventario;
-import org.puravidagourmet.api.domain.enums.EstadoInventario;
 import org.puravidagourmet.api.domain.pojo.InventarioPojo;
-import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.mappers.InventarioMapper;
 import org.puravidagourmet.api.services.InventarioService;
@@ -56,13 +54,8 @@ public class InventarioController extends BaseController {
   @PreAuthorize("hasRole ('ADMIN')")
   public ResponseEntity<String> create(
       @RequestBody @Valid InventarioPojo inventarioPojo, @CurrentUser UserPrincipal userPrincipal) {
-    Inventario inventario = mapper.toInventario(inventarioPojo);
-    inventario.setEstado(EstadoInventario.CREADO);
-    inventario.setResponsable(
-        usuarioRepository
-            .findByEmail(userPrincipal.getName())
-            .orElseThrow(() -> new BadRequestException("Usuario que registra no fue encontrado")));
-    inventarioService.createInventario(inventario);
+    Inventario inventario =
+        inventarioService.createInventario(mapper.toInventario(inventarioPojo), userPrincipal);
     return ResponseEntity.created(createLocation(String.valueOf(inventario.getId()))).build();
   }
 

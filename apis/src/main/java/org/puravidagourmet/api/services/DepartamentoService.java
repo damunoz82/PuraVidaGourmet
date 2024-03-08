@@ -49,10 +49,11 @@ public class DepartamentoService {
   }
 
   public void deleteById(long id) {
+    validateDelete(id);
     departamentoRepository.delete(id);
   }
 
-  protected void validateSave(Departamento departamento) {
+  private void validateSave(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 
@@ -61,7 +62,7 @@ public class DepartamentoService {
     }
   }
 
-  protected void validateUpdate(Departamento departamento) {
+  private void validateUpdate(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 
@@ -71,7 +72,7 @@ public class DepartamentoService {
     }
   }
 
-  public void validateDelete(long id) {
+  private void validateDelete(long id) {
     // fixme - finish
     // check if category is in use.
   }

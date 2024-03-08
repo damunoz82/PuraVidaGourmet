@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.Departamento;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,8 +31,8 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
 
   private final RowMapper<Departamento> rowMapper =
       (rs, rowNum) -> {
-        User responsable =
-            User.builder()
+        Usuario responsable =
+            Usuario.builder()
                 .id(rs.getInt("responsable_id"))
                 .name(rs.getString("name"))
                 .email(rs.getString("email"))
