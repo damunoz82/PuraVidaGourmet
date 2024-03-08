@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.PROD_REC002;
+
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.puravidagourmet.api.domain.entity.Producto;
 import org.puravidagourmet.api.domain.pojo.ProductoPojo;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.ProductoMapper;
 import org.puravidagourmet.api.services.ProductoService;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +51,7 @@ public class ProductoController extends BaseController {
   public ProductoPojo get(@PathVariable long id) {
     Optional<Producto> resultado = productoService.getProductoById(id);
     return mapper.toProductoPojo(
-        resultado.orElseThrow(() -> new ResourceNotFoundException("Materia prima", "id", id)));
+        resultado.orElseThrow(() -> new PuraVidaExceptionHandler(PROD_REC002, id)));
   }
 
   @PostMapping
@@ -69,7 +71,7 @@ public class ProductoController extends BaseController {
 
     // check exists.
     if (productoService.getProductoById(id).isEmpty()) {
-      throw new ResourceNotFoundException("Producto", "id", id);
+      throw new PuraVidaExceptionHandler(PROD_REC002, id);
     }
 
     producto.setId(id);

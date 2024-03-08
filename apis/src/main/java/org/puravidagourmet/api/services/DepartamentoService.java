@@ -1,12 +1,14 @@
 package org.puravidagourmet.api.services;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.DEP_REC001;
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.USU_REC003;
+
 import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.DepartamentoRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Departamento;
-import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +37,7 @@ public class DepartamentoService {
             .findByEmail(departamento.getResponsable().getEmail())
             .orElseThrow(
                 () ->
-                    new ResourceNotFoundException(
-                        "Usuario", "email", departamento.getResponsable().getEmail())));
+                    new PuraVidaExceptionHandler(USU_REC003)));
     return departamentoRepository.save(departamento);
   }
 
@@ -58,7 +59,7 @@ public class DepartamentoService {
         departamentoRepository.findByNombre(departamento.getNombre());
 
     if (dbTipoProducto.isPresent()) {
-      throw new BadRequestException("Ya existe un departamento con ese nombre");
+      throw new PuraVidaExceptionHandler(DEP_REC001);
     }
   }
 
@@ -67,8 +68,7 @@ public class DepartamentoService {
         departamentoRepository.findByNombre(departamento.getNombre());
 
     if (dbTipoProducto.isPresent() && dbTipoProducto.get().getId() != departamento.getId()) {
-      throw new BadRequestException(
-          "Ya existe un departamento con ese nombre - escoge otro nombre para actualizar");
+      throw new PuraVidaExceptionHandler(DEP_REC001);
     }
   }
 

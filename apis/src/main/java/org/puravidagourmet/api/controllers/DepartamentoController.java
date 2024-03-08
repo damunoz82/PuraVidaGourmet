@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.DEP_REC002;
+
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.puravidagourmet.api.domain.entity.Departamento;
 import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.DepartamentoMapper;
 import org.puravidagourmet.api.services.DepartamentoService;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +53,7 @@ public class DepartamentoController extends BaseController {
   public DepartamentoPojo get(@PathVariable long id) {
     Optional<Departamento> result = departamentoService.getDepartamento(id);
     return mapper.toDepartamentoPojo(
-        result.orElseThrow(() -> new ResourceNotFoundException("Departamento", "id", id)));
+        result.orElseThrow(() -> new PuraVidaExceptionHandler(DEP_REC002, id)));
   }
 
   @PostMapping
@@ -72,7 +74,7 @@ public class DepartamentoController extends BaseController {
 
     // check exists.
     if (departamentoService.getDepartamento(id).isEmpty()) {
-      throw new ResourceNotFoundException("Departamento", "id", id);
+      throw new PuraVidaExceptionHandler(DEP_REC002, id);
     }
 
     departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));

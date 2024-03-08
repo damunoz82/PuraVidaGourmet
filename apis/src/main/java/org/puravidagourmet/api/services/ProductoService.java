@@ -1,10 +1,12 @@
 package org.puravidagourmet.api.services;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.PROD_REC001;
+
 import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.ProductoRepository;
 import org.puravidagourmet.api.domain.entity.Producto;
-import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.utils.MathUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,22 +27,23 @@ public class ProductoService {
 
   @Transactional
   public Producto saveProducto(Producto producto) {
-    try {
-      if (producto.getId() <= 0) {
-        validateSave(producto);
-      } else {
-        validateUpdate(producto);
-      }
-
-      // calcular coste final de producto
-      calcularCosteFinalDeProducto(producto);
-
-      // guardar.
-      return productoRepository.save(producto);
-    } catch (Exception e) {
-      throw new BadRequestException(
-          "Error al salvar el producto. Verifica que los datos esten correctos.");
+    //    try {
+    // fixme - ummm, porque esta excepcion?  que no estoy/estaba validando... revisar.
+    if (producto.getId() <= 0) {
+      validateSave(producto);
+    } else {
+      validateUpdate(producto);
     }
+
+    // calcular coste final de producto
+    calcularCosteFinalDeProducto(producto);
+
+    // guardar.
+    return productoRepository.save(producto);
+    //    } catch (Exception e) {
+    //      throw new PuraVidaExceptionHandler(
+    //          "Error al salvar el producto. Verifica que los datos esten correctos.");
+    //    }
   }
 
   public Optional<Producto> getProductoById(long id) {
@@ -55,7 +58,7 @@ public class ProductoService {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent()) {
-      throw new BadRequestException("Ya existe un producto con ese nombre");
+      throw new PuraVidaExceptionHandler(PROD_REC001);
     }
   }
 
@@ -63,8 +66,7 @@ public class ProductoService {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent() && dbProducto.get().getId() != producto.getId()) {
-      throw new BadRequestException(
-          "Ya existe un producto con ese nombre - escoge otro nombre para actualizar");
+      throw new PuraVidaExceptionHandler(PROD_REC001);
     }
   }
 

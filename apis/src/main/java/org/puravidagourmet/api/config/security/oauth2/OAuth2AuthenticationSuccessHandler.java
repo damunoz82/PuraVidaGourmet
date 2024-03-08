@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.config.security.oauth2;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.AUTH_REC001;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +11,7 @@ import java.net.URI;
 import java.util.Optional;
 import org.puravidagourmet.api.config.AppProperties;
 import org.puravidagourmet.api.config.security.UserPrincipal;
-import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.services.TokenService;
 import org.puravidagourmet.api.utils.CookieUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,8 +66,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             .map(Cookie::getValue);
 
     if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
-      throw new BadRequestException(
-          "Sorry! We've got an Unauthorized Redirect URI and can't proceed with the authentication");
+      throw new PuraVidaExceptionHandler(AUTH_REC001);
     }
 
     String targetUrl = redirectUri.orElse(getDefaultTargetUrl());

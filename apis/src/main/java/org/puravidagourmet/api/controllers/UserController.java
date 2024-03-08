@@ -1,5 +1,8 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.USU_REC002;
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.USU_REC004;
+
 import com.google.common.base.Strings;
 import java.net.URI;
 import java.util.Comparator;
@@ -10,8 +13,8 @@ import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Usuario;
-import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
+import org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,7 +44,7 @@ public class UserController {
   public Usuario getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
     return usuarioRepository
         .findByEmail(userPrincipal.getName())
-        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getName()));
+        .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC004, "id", userPrincipal.getName()));
   }
 
   @GetMapping
@@ -57,7 +60,7 @@ public class UserController {
   public Usuario get(@PathVariable long id) {
     return usuarioRepository
         .findById(id)
-        .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+        .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC004, "id", id));
   }
 
   @PutMapping("/{id}")
@@ -70,7 +73,7 @@ public class UserController {
 
     // check exists.
     if (dbUser.isEmpty()) {
-      throw new ResourceNotFoundException("Usuario", "id", id);
+      throw new PuraVidaExceptionHandler(USU_REC004, "id", id);
     }
 
     Usuario dbUsuario = dbUser.get();
@@ -78,7 +81,7 @@ public class UserController {
     // check if email changed:
     if (!dbUsuario.getEmail().equals(usuario.getEmail())) {
       if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
-        throw new BadRequestException("Ya existe un usuario con ese correo electronico.");
+        throw new PuraVidaExceptionHandler(PuraVidaErrorCodes.USU_REC001);
       }
     }
 
@@ -104,10 +107,10 @@ public class UserController {
     Usuario dbUsuario =
         usuarioRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+            .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC004, "id", id));
 
     if (dbUsuario != null && dbUsuario.getEmail().equals(userPrincipal.getName())) {
-      throw new BadRequestException("Tu no puedes desactivar tu propia cuenta.");
+      throw new PuraVidaExceptionHandler(USU_REC002);
     }
     assert dbUsuario != null;
     dbUsuario.setEnabled(false);

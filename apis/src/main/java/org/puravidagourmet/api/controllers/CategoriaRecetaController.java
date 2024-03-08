@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.CAT_REC002;
+
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.pojo.CategoriaRecetaPojo;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.CategoriaRecetaMapper;
 import org.puravidagourmet.api.services.CategoriaRecetaService;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/categoria-receta", produces = "application/json")
 public class CategoriaRecetaController extends BaseController {
 
-  //  private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaRecetaController.class);
   private final CategoriaRecetaService categoriaRecetaService;
 
   private final CategoriaRecetaMapper mapper;
@@ -51,7 +52,7 @@ public class CategoriaRecetaController extends BaseController {
   public CategoriaRecetaPojo get(@PathVariable long id) {
     Optional<CategoriaReceta> result = categoriaRecetaService.getCategoriaReceta(id);
     return mapper.toCategoriaRecetaPojo(
-        result.orElseThrow(() -> new ResourceNotFoundException("Categoria Receta", "id", id)));
+        result.orElseThrow(() -> new PuraVidaExceptionHandler(CAT_REC002, id)));
   }
 
   @PostMapping
@@ -74,7 +75,7 @@ public class CategoriaRecetaController extends BaseController {
 
     // check exists.
     if (categoriaRecetaService.getCategoriaReceta(id).isEmpty()) {
-      throw new ResourceNotFoundException("Categoria", "id", id);
+        throw new PuraVidaExceptionHandler(CAT_REC002, id);
     }
 
     categoriaRecetaService.saveCategoriaReceta(mapper.toCategoriaReceta(categoriaRecetaPojo));

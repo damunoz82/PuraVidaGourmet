@@ -1,5 +1,8 @@
 package org.puravidagourmet.api.services;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.INVENT_REC001;
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.USU_REC003;
+
 import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.config.security.UserPrincipal;
@@ -7,9 +10,7 @@ import org.puravidagourmet.api.db.repository.InventarioRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Inventario;
 import org.puravidagourmet.api.domain.enums.EstadoInventario;
-import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,8 +29,8 @@ public class InventarioService {
     inventario.setEstado(EstadoInventario.CREADO);
     inventario.setResponsable(
         usuarioRepository
-            .findByEmail(userPrincipal.getName())
-            .orElseThrow(() -> new BadRequestException("Usuario que registra no fue encontrado")));
+            .findByEmail(userPrincipal.getName()) // fixme - check that user is active
+            .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC003)));
     return inventarioRepository.iniciarInventario(inventario);
   }
 
@@ -47,11 +48,11 @@ public class InventarioService {
     Inventario inventario =
         inventarioRepository
             .findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Inventario", "id", id));
+            .orElseThrow(() -> new PuraVidaExceptionHandler(INVENT_REC001, id));
     inventario.setUsuarioModifica(
         usuarioRepository
-            .findByEmail(userPrincipal.getName())
-            .orElseThrow(() -> new BadRequestException("Usuario Modifica no encontrado.")));
+            .findByEmail(userPrincipal.getName()) // fixme check that user is active.
+            .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC003)));
     inventario.setEstado(EstadoInventario.ABANDONADO);
     inventarioRepository.cancel(inventario);
   }

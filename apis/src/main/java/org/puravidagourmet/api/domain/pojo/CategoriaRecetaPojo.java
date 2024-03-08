@@ -20,6 +20,6 @@ public class CategoriaRecetaPojo {
   @Min(0)
   private long id;
 
-  @NotBlank(message = "Nombre de la categoria no puede estar en blanco.")
+  @NotBlank(message = "{categoria.receta.nombre.notBlank}")
   private String nombre;
 }
