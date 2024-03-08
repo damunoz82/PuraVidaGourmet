@@ -5,10 +5,8 @@ import java.util.Optional;
 import org.puravidagourmet.api.db.repository.DepartamentoRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Departamento;
-import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +24,12 @@ public class DepartamentoService {
 
   @Transactional
   public Departamento saveDepartamento(Departamento departamento) {
+    if (departamento.getId() <= 0) {
+      validateSave(departamento);
+    } else {
+      validateUpdate(departamento);
+    }
+
     departamento.setResponsable(
         usuarioRepository
             .findByEmail(departamento.getResponsable().getEmail())
@@ -48,16 +52,16 @@ public class DepartamentoService {
     departamentoRepository.delete(id);
   }
 
-  public void validateSave(DepartamentoPojo departamento) {
+  protected void validateSave(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 
     if (dbTipoProducto.isPresent()) {
-      throw new BadRequestException("Ya existe un tipo de producto con ese nombre");
+      throw new BadRequestException("Ya existe un departamento con ese nombre");
     }
   }
 
-  public void validateUpdate(DepartamentoPojo departamento) {
+  protected void validateUpdate(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 

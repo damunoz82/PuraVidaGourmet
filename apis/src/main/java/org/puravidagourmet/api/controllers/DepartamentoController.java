@@ -11,7 +11,6 @@ import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.mappers.DepartamentoMapper;
 import org.puravidagourmet.api.services.DepartamentoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -58,7 +57,7 @@ public class DepartamentoController extends BaseController {
   @PostMapping
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(@RequestBody @Valid DepartamentoPojo departamento) {
-    departamentoService.validateSave(departamento);
+    //    departamentoService.validateSave(departamento);
 
     Departamento result = departamentoService.saveDepartamento(mapper.toDepartamento(departamento));
 
@@ -76,7 +75,7 @@ public class DepartamentoController extends BaseController {
       throw new ResourceNotFoundException("Departamento", "id", id);
     }
 
-    departamentoService.validateUpdate(departamentoPojo);
+    //    departamentoService.validateUpdate(departamentoPojo);
 
     departamentoService.saveDepartamento(mapper.toDepartamento(departamentoPojo));
 
