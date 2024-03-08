@@ -1,8 +1,5 @@
 package org.puravidagourmet.api.domain.entity;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,26 +19,21 @@ public class Producto {
 
   private long id;
 
-  @NotEmpty
   private String nombre;
 
-  @NotEmpty private String proveedor;
+  private String proveedor;
 
   private TipoProducto tipoProducto;
 
-  @Min(0)
   private long precioDeCompra;
 
-  @Min(0)
   private long cantidadPorUnidad;
 
-  @NotNull private FormatoCompra formatoCompra;
+  private FormatoCompra formatoCompra;
 
-  @NotNull private UnidadMedidas unidadMedida;
+  private UnidadMedidas unidadMedida;
 
-  @Min(0)
   private float porcentajeMerma;
 
-  @Min(0)
   private float costeUnitario;
 }

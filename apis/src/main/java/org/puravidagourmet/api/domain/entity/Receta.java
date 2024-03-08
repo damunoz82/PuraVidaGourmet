@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.puravidagourmet.api.domain.User;
 
 @Data
 @ToString
@@ -44,9 +43,9 @@ public class Receta {
 
   private String alergenos;
 
-  private User usuarioRegistra;
+  private Usuario usuarioRegistra;
 
-  private User usuarioModifica;
+  private Usuario usuarioModifica;
 
   private List<Ingrediente> ingredientes;
 

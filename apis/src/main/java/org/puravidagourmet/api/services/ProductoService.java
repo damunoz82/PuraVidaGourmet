@@ -1,45 +1,45 @@
 package org.puravidagourmet.api.services;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.ProductoRepository;
 import org.puravidagourmet.api.domain.entity.Producto;
-import org.puravidagourmet.api.domain.pojo.ProductoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.puravidagourmet.api.utils.MathUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProductoService {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(ProductoService.class);
+  private final ProductoRepository productoRepository;
 
-  @Autowired private ProductoRepository productoRepository;
+  public ProductoService(ProductoRepository productoRepository) {
+    this.productoRepository = productoRepository;
+  }
 
   public void deleteById(long id) {
+    validateDelete(id);
     productoRepository.delete(id);
   }
 
   @Transactional
   public Producto saveProducto(Producto producto) {
     try {
-      LOGGER.info("Start: saveProducto");
+      if (producto.getId() <= 0) {
+        validateSave(producto);
+      } else {
+        validateUpdate(producto);
+      }
 
       // calcular coste final de producto
       calcularCosteFinalDeProducto(producto);
 
       // guardar.
       return productoRepository.save(producto);
-    } catch(Exception e) {
-      LOGGER.error("Error al salvar el producto", e);
-      throw new BadRequestException("Error al salvar el producto. Verifica que los datos esten correctos." +
-              "");
-    }finally {
-      LOGGER.info("End: saveProducto");
+    } catch (Exception e) {
+      throw new BadRequestException(
+          "Error al salvar el producto. Verifica que los datos esten correctos.");
     }
   }
 
@@ -51,7 +51,7 @@ public class ProductoService {
     return productoRepository.findAll();
   }
 
-  public void validateSave(ProductoPojo producto) {
+  private void validateSave(Producto producto) {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent()) {
@@ -59,7 +59,7 @@ public class ProductoService {
     }
   }
 
-  public void validateUpdate(ProductoPojo producto) {
+  private void validateUpdate(Producto producto) {
     Optional<Producto> dbProducto = productoRepository.findByNombre(producto.getNombre());
 
     if (dbProducto.isPresent() && dbProducto.get().getId() != producto.getId()) {
@@ -68,7 +68,7 @@ public class ProductoService {
     }
   }
 
-  public void validateDelete(long producto) {
+  private void validateDelete(long producto) {
     // fixme finish
     // check if ingrediente is been used in any recipe.
   }
@@ -80,16 +80,12 @@ public class ProductoService {
           costeUnitario =
               (float) 1 * producto.getPrecioDeCompra() / producto.getCantidadPorUnidad();
       case UNIDAD ->
-          costeUnitario = (float) producto.getPrecioDeCompra() / producto.getCantidadPorUnidad() * (1 - producto.getPorcentajeMerma());
+          costeUnitario =
+              (float) producto.getPrecioDeCompra()
+                  / producto.getCantidadPorUnidad()
+                  * (1 - producto.getPorcentajeMerma());
     }
 
-    producto.setCosteUnitario(round(costeUnitario, 2));
-  }
-
-  // fixme - move to more suitable place
-  private float round(float d, int decimalPlace) {
-    BigDecimal bd = new BigDecimal(Float.toString(d));
-    bd = bd.setScale(decimalPlace, BigDecimal.ROUND_HALF_UP);
-    return bd.floatValue();
+    producto.setCosteUnitario(MathUtils.round(costeUnitario, 2));
   }
 }

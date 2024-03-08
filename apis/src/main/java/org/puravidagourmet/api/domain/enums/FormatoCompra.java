@@ -7,12 +7,13 @@ public enum FormatoCompra {
   OTRO(3);
 
   private final int value;
+
   FormatoCompra(int value) {
     this.value = value;
   }
 
   public static FormatoCompra getFormatoCompra(int value) {
-    for (FormatoCompra unidad: FormatoCompra.values()) {
+    for (FormatoCompra unidad : FormatoCompra.values()) {
       if (unidad.value == value) {
         return unidad;
       }

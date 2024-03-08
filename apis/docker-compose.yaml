@@ -9,9 +9,9 @@ services:
     ports:
       - "5433:5432"
   app:
-    image: pvgourmet/pura-vida-gourmet:1.1
+    image: pvgourmet/pura-vida-gourmet-api:1.1
     restart: on-failure
     ports:
-      - "8081:8080"
+      - "8080:8080"
     depends_on:
       - db

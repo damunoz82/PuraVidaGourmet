@@ -4,19 +4,26 @@ import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.TipoProductoRepository;
 import org.puravidagourmet.api.domain.entity.TipoProducto;
-import org.puravidagourmet.api.domain.pojo.TipoProductoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TipoProductoService {
 
-  @Autowired private TipoProductoRepository tipoProductoRepository;
+  private final TipoProductoRepository tipoProductoRepository;
+
+  public TipoProductoService(TipoProductoRepository tipoProductoRepository) {
+    this.tipoProductoRepository = tipoProductoRepository;
+  }
 
   @Transactional
   public TipoProducto saveTipoProducto(TipoProducto tipoProducto) {
+    if (tipoProducto.getId() <= 0) {
+      validateSave(tipoProducto);
+    } else {
+      validateUpdate(tipoProducto);
+    }
     return tipoProductoRepository.save(tipoProducto);
   }
 
@@ -29,10 +36,11 @@ public class TipoProductoService {
   }
 
   public void deleteById(long id) {
+    validateDelete(id);
     tipoProductoRepository.delete(id);
   }
 
-  public void validateSave(TipoProductoPojo receta) {
+  private void validateSave(TipoProducto receta) {
     Optional<TipoProducto> dbTipoProducto = tipoProductoRepository.findByNombre(receta.getNombre());
 
     if (dbTipoProducto.isPresent()) {
@@ -40,7 +48,7 @@ public class TipoProductoService {
     }
   }
 
-  public void validateUpdate(TipoProductoPojo receta) {
+  private void validateUpdate(TipoProducto receta) {
     Optional<TipoProducto> dbTipoProducto = tipoProductoRepository.findByNombre(receta.getNombre());
 
     if (dbTipoProducto.isPresent() && dbTipoProducto.get().getId() != receta.getId()) {
@@ -49,7 +57,7 @@ public class TipoProductoService {
     }
   }
 
-  public void validateDelete(long id) {
+  private void validateDelete(long id) {
     // fixme - finish
     // check if category is in use.
   }

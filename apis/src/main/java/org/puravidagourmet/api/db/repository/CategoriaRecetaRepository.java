@@ -13,21 +13,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
 
+  private static final RowMapper<CategoriaReceta> rowMapper =
+      (rs, rowNum) ->
+          CategoriaReceta.builder().id(rs.getInt("id")).nombre(rs.getString("nombre")).build();
   private final String FIND_ALL = "select id, nombre from categoria_receta";
-
   private final String FIND_BY_NOMBRE = FIND_ALL + " where nombre = ?";
-
   private final String FIND_BY_ID = FIND_ALL + " where id = ?";
-
   private final String CREATE_RECETA_CATEGORIA = "insert into categoria_receta (nombre) values (?)";
-
   private final String UPDATE_RECETA_CATEGORIA = "update categoria_receta set nombre=? where id=?";
-
   private final String DELETE = "delete from categoria_receta where id = ?";
-
-  private static final RowMapper<CategoriaReceta> rowMapper = (rs, rowNum) -> CategoriaReceta.builder()
-          .id(rs.getInt("id"))
-          .nombre(rs.getString("nombre")).build();
 
   public CategoriaRecetaRepository(JdbcTemplate template) {
     super(template);
@@ -41,7 +35,7 @@ public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
     try {
       CategoriaReceta categoriaReceta = template.queryForObject(FIND_BY_NOMBRE, rowMapper, nombre);
       return Optional.ofNullable(categoriaReceta);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -50,7 +44,7 @@ public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
     try {
       CategoriaReceta categoriaReceta = template.queryForObject(FIND_BY_ID, rowMapper, id);
       return Optional.ofNullable(categoriaReceta);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -71,7 +65,8 @@ public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
   }
 
   @Override
-  protected void prepareStatement(PreparedStatement ps, CategoriaReceta receta) throws SQLException {
+  protected void prepareStatement(PreparedStatement ps, CategoriaReceta receta)
+      throws SQLException {
     ps.setString(1, receta.getNombre());
   }
 }

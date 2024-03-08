@@ -4,7 +4,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
 import org.puravidagourmet.api.domain.entity.TipoProducto;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,17 +19,21 @@ public class TipoProductoRepository extends BaseRepository<TipoProducto> {
 
   private final String FIND_BY_ID = FIND_ALL + " where id = ?";
 
-  private final String CREATE_RECETA_CATEGORIA = "insert into tipo_producto (nombre, ubicacion) values" +
-          "(?, ?)";
+  private final String CREATE_RECETA_CATEGORIA =
+      "insert into tipo_producto (nombre, ubicacion) values" + "(?, ?)";
 
-  private final String UPDATE_RECETA_CATEGORIA = "update tipo_producto set nombre=?, ubicacion=? where id=?";
+  private final String UPDATE_RECETA_CATEGORIA =
+      "update tipo_producto set nombre=?, ubicacion=? where id=?";
 
   private final String DELETE = "delete from tipo_producto where id = ?";
 
-  private final RowMapper<TipoProducto> rowMapper = (rs, rowNum) -> TipoProducto.builder()
-          .id(rs.getInt("id"))
-          .ubicacion(rs.getString("ubicacion"))
-          .nombre(rs.getString("nombre")).build();
+  private final RowMapper<TipoProducto> rowMapper =
+      (rs, rowNum) ->
+          TipoProducto.builder()
+              .id(rs.getInt("id"))
+              .ubicacion(rs.getString("ubicacion"))
+              .nombre(rs.getString("nombre"))
+              .build();
 
   public TipoProductoRepository(JdbcTemplate template) {
     super(template);
@@ -50,7 +53,7 @@ public class TipoProductoRepository extends BaseRepository<TipoProducto> {
     try {
       TipoProducto tipoProducto = template.queryForObject(FIND_BY_NOMBRE, rowMapper, nombre);
       return Optional.ofNullable(tipoProducto);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -59,7 +62,7 @@ public class TipoProductoRepository extends BaseRepository<TipoProducto> {
     try {
       TipoProducto tipoProducto = template.queryForObject(FIND_BY_ID, rowMapper, id);
       return Optional.ofNullable(tipoProducto);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -70,10 +73,11 @@ public class TipoProductoRepository extends BaseRepository<TipoProducto> {
       tipoProducto.setId(id);
       return tipoProducto;
     }
-    template.update(UPDATE_RECETA_CATEGORIA,
-            tipoProducto.getNombre(),
-            tipoProducto.getUbicacion(),
-            tipoProducto.getId());
+    template.update(
+        UPDATE_RECETA_CATEGORIA,
+        tipoProducto.getNombre(),
+        tipoProducto.getUbicacion(),
+        tipoProducto.getId());
     return tipoProducto;
   }
 

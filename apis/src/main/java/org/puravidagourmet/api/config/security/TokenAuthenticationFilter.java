@@ -19,11 +19,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-  @Autowired private TokenService tokenService;
-
-  @Autowired private CustomUserDetailsService customUserDetailsService;
-
   private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
+  @Autowired private TokenService tokenService;
+  @Autowired private CustomUserDetailsService customUserDetailsService;
 
   @Override
   protected void doFilterInternal(

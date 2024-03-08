@@ -5,24 +5,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import org.puravidagourmet.api.domain.User;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
 import org.puravidagourmet.api.domain.entity.Receta;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class RecetaRepository  extends BaseRepository<Receta> {
+public class RecetaRepository extends BaseRepository<Receta> {
 
-  private final String FIND_ALL = "select r.id, r.impuestos, r.alergenos, r.costo_porcion, r.costo_receta, r.elaboracion, r.equipo_necesario, r.fecha_modificacion, r.fecha_registro, r.margen_ganancia, " +
-          "r.nombre, r.numero_porciones, r.precio_de_venta, r.tamanio_porcion, r.temperatura_de_servido, r.tiempo_coccion, r.tiempo_preparacion, " +
-          "r.categoria_receta_id, cr.nombre as nombreCategoria, r.usuario_modifica_id, up.name as modifica_name, up.email as modifica_email, r.usuario_registra_id, ur.name as registra_name, ur.email as registra_email  from recetas r " +
-          "join categoria_receta cr on r.categoria_receta_id = cr.id " +
-          "join usuario ur on r.usuario_registra_id = ur.id " +
-          "left join usuario up on r.usuario_modifica_id  = up.id";
+  private final String FIND_ALL =
+      "select r.id, r.impuestos, r.alergenos, r.costo_porcion, r.costo_receta, r.elaboracion, r.equipo_necesario, r.fecha_modificacion, r.fecha_registro, r.margen_ganancia, "
+          + "r.nombre, r.numero_porciones, r.precio_de_venta, r.tamanio_porcion, r.temperatura_de_servido, r.tiempo_coccion, r.tiempo_preparacion, "
+          + "r.categoria_receta_id, cr.nombre as nombreCategoria, r.usuario_modifica_id, up.name as modifica_name, up.email as modifica_email, r.usuario_registra_id, ur.name as registra_name, ur.email as registra_email  from recetas r "
+          + "join categoria_receta cr on r.categoria_receta_id = cr.id "
+          + "join usuario ur on r.usuario_registra_id = ur.id "
+          + "left join usuario up on r.usuario_modifica_id  = up.id";
 
   private final String FIND_BY_NOMBRE = FIND_ALL + " where r.nombre = ?";
 
@@ -30,29 +30,42 @@ public class RecetaRepository  extends BaseRepository<Receta> {
 
   private final String FIND_BY_CATEGORIA = FIND_ALL + " where cr.nombre = ?";
 
-  private final String CREATE_RECETA = "insert into recetas (alergenos, costo_porcion, costo_receta, elaboracion, equipo_necesario, fecha_modificacion, fecha_registro, margen_ganancia, " +
-          "nombre, numero_porciones, precio_de_venta, tamanio_porcion, temperatura_de_servido, tiempo_coccion, tiempo_preparacion, " +
-          "categoria_receta_id, usuario_modifica_id, usuario_registra_id, impuestos) values (?, ?, ?, ?, ?, null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?)";
+  private final String CREATE_RECETA =
+      "insert into recetas (alergenos, costo_porcion, costo_receta, elaboracion, equipo_necesario, fecha_modificacion, "
+          + "fecha_registro, margen_ganancia, "
+          + "nombre, numero_porciones, precio_de_venta, tamanio_porcion, temperatura_de_servido, tiempo_coccion, "
+          + "tiempo_preparacion, "
+          + "categoria_receta_id, usuario_modifica_id, usuario_registra_id, impuestos) values (?, ?, ?, ?, ?, "
+          + "null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, null, ?, ?)";
 
-  private final String UPDATE_RECETA = "update recetas set impuestos=?, alergenos=?, costo_porcion=?, costo_receta=?, elaboracion=?, equipo_necesario=?, fecha_modificacion=?, margen_ganancia=?, " +
-          "nombre=?, numero_porciones=?, precio_de_venta=?, tamanio_porcion=?, temperatura_de_servido=?, tiempo_coccion=?, tiempo_preparacion=?, " +
-          "categoria_receta_id=?, usuario_modifica_id=? where id=?";
+  private final String UPDATE_RECETA =
+      "update recetas set impuestos=?, alergenos=?, costo_porcion=?, costo_receta=?, elaboracion=?, equipo_necesario=?, "
+          + "fecha_modificacion=?, margen_ganancia=?, nombre=?, numero_porciones=?, precio_de_venta=?, tamanio_porcion=?, "
+          + "temperatura_de_servido=?, tiempo_coccion=?, tiempo_preparacion=?, "
+          + "categoria_receta_id=?, usuario_modifica_id=? where id=?";
 
   private final String DELETE = "delete from recetas where id = ?";
 
-  private final RowMapper<Receta> rowMapper = (rs, rowNum) -> {
-    User usuarioModifica = User.builder()
-            .id(rs.getLong("usuario_modifica_id"))
-            .name(rs.getString("modifica_name"))
-            .email(rs.getString("modifica_email")).build();
-    User usuarioRegistra = User.builder()
-            .id(rs.getLong("usuario_registra_id"))
-            .name(rs.getString("registra_name"))
-            .email(rs.getString("registra_email")).build();
-    CategoriaReceta categoriaReceta = CategoriaReceta.builder()
-            .id(rs.getLong("categoria_receta_id"))
-            .nombre(rs.getString("nombreCategoria")).build();
-    return Receta.builder()
+  private final RowMapper<Receta> rowMapper =
+      (rs, rowNum) -> {
+        Usuario usuarioModifica =
+            Usuario.builder()
+                .id(rs.getLong("usuario_modifica_id"))
+                .name(rs.getString("modifica_name"))
+                .email(rs.getString("modifica_email"))
+                .build();
+        Usuario usuarioRegistra =
+            Usuario.builder()
+                .id(rs.getLong("usuario_registra_id"))
+                .name(rs.getString("registra_name"))
+                .email(rs.getString("registra_email"))
+                .build();
+        CategoriaReceta categoriaReceta =
+            CategoriaReceta.builder()
+                .id(rs.getLong("categoria_receta_id"))
+                .nombre(rs.getString("nombreCategoria"))
+                .build();
+        return Receta.builder()
             .id(rs.getInt("id"))
             .impuestos(rs.getFloat("impuestos"))
             .alergenos(rs.getString("alergenos"))
@@ -75,7 +88,7 @@ public class RecetaRepository  extends BaseRepository<Receta> {
             .usuarioRegistra(usuarioRegistra)
             .ingredientes(new ArrayList<>())
             .build();
-  };
+      };
 
   public RecetaRepository(JdbcTemplate template) {
     super(template);
@@ -110,7 +123,7 @@ public class RecetaRepository  extends BaseRepository<Receta> {
     try {
       Receta receta = template.queryForObject(FIND_BY_NOMBRE, rowMapper, nombre);
       return Optional.ofNullable(receta);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -119,7 +132,7 @@ public class RecetaRepository  extends BaseRepository<Receta> {
     try {
       Receta receta = template.queryForObject(FIND_BY_ID, rowMapper, id);
       return Optional.ofNullable(receta);
-    } catch(EmptyResultDataAccessException e) {
+    } catch (EmptyResultDataAccessException e) {
       return Optional.empty();
     }
   }
@@ -134,25 +147,26 @@ public class RecetaRepository  extends BaseRepository<Receta> {
       receta.setId(id);
       return receta;
     }
-    template.update(UPDATE_RECETA,
-            receta.getImpuestos(),
-            receta.getAlergenos(),
-            receta.getCostoPorcion(),
-            receta.getCostoReceta(),
-            receta.getElaboracion(),
-            receta.getEquipoNecesario(),
-            receta.getFechaModificacion(),
-            receta.getMargenGanancia(),
-            receta.getNombre(),
-            receta.getNumeroPorciones(),
-            receta.getPrecioDeVenta(),
-            receta.getTamanioPorcion(),
-            receta.getTemperaturaDeServido(),
-            receta.getTiempoCoccion(),
-            receta.getTiempoPreparacion(),
-            receta.getCategoriaReceta().getId(),
-            receta.getUsuarioModifica().getId(),
-            receta.getId());
+    template.update(
+        UPDATE_RECETA,
+        receta.getImpuestos(),
+        receta.getAlergenos(),
+        receta.getCostoPorcion(),
+        receta.getCostoReceta(),
+        receta.getElaboracion(),
+        receta.getEquipoNecesario(),
+        receta.getFechaModificacion(),
+        receta.getMargenGanancia(),
+        receta.getNombre(),
+        receta.getNumeroPorciones(),
+        receta.getPrecioDeVenta(),
+        receta.getTamanioPorcion(),
+        receta.getTemperaturaDeServido(),
+        receta.getTiempoCoccion(),
+        receta.getTiempoPreparacion(),
+        receta.getCategoriaReceta().getId(),
+        receta.getUsuarioModifica().getId(),
+        receta.getId());
     return receta;
   }
 

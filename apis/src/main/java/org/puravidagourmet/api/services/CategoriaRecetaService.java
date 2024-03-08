@@ -4,20 +4,27 @@ import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.CategoriaRecetaRepository;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
-import org.puravidagourmet.api.domain.pojo.CategoriaRecetaPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CategoriaRecetaService {
 
-  @Autowired private CategoriaRecetaRepository categoriaRecetaRepository;
+  private final CategoriaRecetaRepository categoriaRecetaRepository;
+
+  public CategoriaRecetaService(CategoriaRecetaRepository categoriaRecetaRepository) {
+    this.categoriaRecetaRepository = categoriaRecetaRepository;
+  }
 
   @Transactional
-  public CategoriaReceta saveCategoriaReceta(CategoriaReceta tipoProducto) {
-    return categoriaRecetaRepository.save(tipoProducto);
+  public CategoriaReceta saveCategoriaReceta(CategoriaReceta categoriaReceta) {
+    if (categoriaReceta.getId() <= 0) {
+      validateSave(categoriaReceta);
+    } else {
+      validateUpdate(categoriaReceta);
+    }
+    return categoriaRecetaRepository.save(categoriaReceta);
   }
 
   public Optional<CategoriaReceta> getCategoriaReceta(long id) {
@@ -29,10 +36,11 @@ public class CategoriaRecetaService {
   }
 
   public void deleteById(long id) {
+    validateDelete(id);
     categoriaRecetaRepository.delete(id);
   }
 
-  public void validateSave(CategoriaRecetaPojo categoriaRecetaPojo) {
+  private void validateSave(CategoriaReceta categoriaRecetaPojo) {
     Optional<CategoriaReceta> dbTipoProducto =
         categoriaRecetaRepository.findByNombre(categoriaRecetaPojo.getNombre());
 
@@ -41,7 +49,7 @@ public class CategoriaRecetaService {
     }
   }
 
-  public void validateUpdate(CategoriaRecetaPojo categoriaRecetaPojo) {
+  private void validateUpdate(CategoriaReceta categoriaRecetaPojo) {
     Optional<CategoriaReceta> dbTipoProducto =
         categoriaRecetaRepository.findByNombre(categoriaRecetaPojo.getNombre());
 
@@ -51,7 +59,7 @@ public class CategoriaRecetaService {
     }
   }
 
-  public void validateDelete(long id) {
+  private void validateDelete(long id) {
     // fixme - finish
     // check if category is in use.
   }

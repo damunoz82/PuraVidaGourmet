@@ -6,16 +6,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
-import org.puravidagourmet.api.domain.User;
+import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,117 +27,93 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/user")
 public class UserController {
+  private final UsuarioRepository usuarioRepository;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-  @Autowired private UsuarioRepository usuarioRepository;
+  private final PasswordEncoder passwordEncoder;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  public UserController(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
+    this.usuarioRepository = usuarioRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
   @GetMapping("/me")
   @PreAuthorize("hasRole('USER')")
-  public User getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
-    try {
-      LOGGER.info("END: getCurrentUser with userPrincipal: {}", userPrincipal);
-      return usuarioRepository
-          .findByEmail(userPrincipal.getName())
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getName()));
-    } finally {
-      LOGGER.info("END: getCurrentUser with userPrincipal: {}", userPrincipal);
-    }
+  public Usuario getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+    return usuarioRepository
+        .findByEmail(userPrincipal.getName())
+        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getName()));
   }
 
   @GetMapping
   @PreAuthorize("hasRole ('ADMIN')")
-  public List<User> getAll() {
-    try {
-      LOGGER.info("START: getAll");
-      return usuarioRepository.findAll().stream()
-              .sorted(Comparator.comparing((User::getName)))
-              .collect(Collectors.toList());
-
-    } finally {
-      LOGGER.info("END: getAll");
-    }
+  public List<Usuario> getAll() {
+    return usuarioRepository.findAll().stream()
+        .sorted(Comparator.comparing((Usuario::getName)))
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}")
   @PreAuthorize("hasRole ('ADMIN')")
-  public User get(@PathVariable long id) {
-    try {
-      LOGGER.info("START: get with id: {}", id);
-      return usuarioRepository
-          .findById(id)
-          .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
-
-    } finally {
-      LOGGER.info("END: get with id: {}", id);
-    }
+  public Usuario get(@PathVariable long id) {
+    return usuarioRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
   }
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
-  public ResponseEntity<String> update(@PathVariable long id, @RequestBody User user) {
-    try {
-      LOGGER.info("START: Update with id: {}, and user: {}", id, user);
-      user.setId(id);
+  public ResponseEntity<String> update(@PathVariable long id, @RequestBody Usuario usuario) {
+    usuario.setId(id);
 
-      // get unchanged user from DB.
-      Optional<User> dbUser = usuarioRepository.findById(id);
+    // get unchanged user from DB.
+    Optional<Usuario> dbUser = usuarioRepository.findById(id);
 
-      // check exists.
-      if (dbUser.isEmpty()) {
-        throw new ResourceNotFoundException("Usuario", "id", id);
-      }
-
-      User dbUsuario = dbUser.get();
-
-      // check if email changed:
-      if (!dbUsuario.getEmail().equals(user.getEmail())) {
-        if (usuarioRepository.findByEmail(user.getEmail()).isPresent()) {
-          throw new BadRequestException("Ya existe un usuario con ese correo electronico.");
-        }
-      }
-
-      // check if new password
-      if (!Strings.isNullOrEmpty(user.getPassword())) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-      } else {
-        user.setPassword(dbUser.get().getPassword());
-      }
-
-      usuarioRepository.save(user);
-
-      URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-      return ResponseEntity.noContent().location(location).build();
-    } finally {
-      LOGGER.info("END: Update with id: {}, and user: {}", id, user);
+    // check exists.
+    if (dbUser.isEmpty()) {
+      throw new ResourceNotFoundException("Usuario", "id", id);
     }
+
+    Usuario dbUsuario = dbUser.get();
+
+    // check if email changed:
+    if (!dbUsuario.getEmail().equals(usuario.getEmail())) {
+      if (usuarioRepository.findByEmail(usuario.getEmail()).isPresent()) {
+        throw new BadRequestException("Ya existe un usuario con ese correo electronico.");
+      }
+    }
+
+    // check if new password
+    if (!Strings.isNullOrEmpty(usuario.getPassword())) {
+      usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+    } else {
+      usuario.setPassword(dbUser.get().getPassword());
+    }
+
+    usuarioRepository.save(usuario);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
   }
 
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> disable(
       @PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
-    try {
-      LOGGER.info("START: Disable with id: {}", id);
 
-      // check user exists in the DB
-      User dbUser =
-          usuarioRepository
-              .findById(id)
-              .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
+    // check user exists in the DB
+    Usuario dbUsuario =
+        usuarioRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuario", "id", id));
 
-      if (dbUser != null && dbUser.getEmail().equals(userPrincipal.getName())) {
-        throw new BadRequestException("Tu no puedes desactivar tu propia cuenta.");
-      }
-      assert dbUser != null;
-      dbUser.setEnabled(false);
-
-      usuarioRepository.save(dbUser);
-      URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-      return ResponseEntity.noContent().location(location).build();
-    } finally {
-      LOGGER.info("END: Disable with id: {}", id);
+    if (dbUsuario != null && dbUsuario.getEmail().equals(userPrincipal.getName())) {
+      throw new BadRequestException("Tu no puedes desactivar tu propia cuenta.");
     }
+    assert dbUsuario != null;
+    dbUsuario.setEnabled(false);
+
+    usuarioRepository.save(dbUsuario);
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
   }
 }

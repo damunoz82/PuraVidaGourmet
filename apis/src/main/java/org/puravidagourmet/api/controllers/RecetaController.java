@@ -1,20 +1,18 @@
 package org.puravidagourmet.api.controllers;
 
+import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
 import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
-import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Receta;
 import org.puravidagourmet.api.domain.pojo.RecetaPojo;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
 import org.puravidagourmet.api.mappers.RecetaMapper;
 import org.puravidagourmet.api.services.RecetasServices;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,11 +30,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping("/receta")
 public class RecetaController extends BaseController {
 
-  @Autowired private RecetasServices recetasServices;
+  private final RecetasServices recetasServices;
 
-  @Autowired private UsuarioRepository usuarioRepository;
+  private final RecetaMapper mapper;
 
-  @Autowired private RecetaMapper mapper;
+  public RecetaController(RecetasServices recetasServices, RecetaMapper mapper) {
+    this.recetasServices = recetasServices;
+    this.mapper = mapper;
+  }
 
   @GetMapping
   @PreAuthorize("hasRole('ADMIN')")
@@ -59,7 +60,7 @@ public class RecetaController extends BaseController {
   @PreAuthorize("hasRole('ADMIN')")
   public ResponseEntity<String> create(
       @RequestBody @Valid RecetaPojo receta, @CurrentUser UserPrincipal userPrincipal) {
-
+    receta.setId(0);
     Receta entity = mapper.toReceta(receta);
     Receta result = recetasServices.saveReceta(entity, userPrincipal);
 
@@ -72,7 +73,6 @@ public class RecetaController extends BaseController {
       @PathVariable long id,
       @RequestBody RecetaPojo receta,
       @CurrentUser UserPrincipal userPrincipal) {
-
     receta.setId(id);
     Receta entity = mapper.toReceta(receta);
     recetasServices.saveReceta(entity, userPrincipal);
@@ -84,8 +84,6 @@ public class RecetaController extends BaseController {
   @DeleteMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")
   public void delete(@PathVariable long id) {
-
-    recetasServices.validateDelete(id);
     recetasServices.delete(id);
   }
 }

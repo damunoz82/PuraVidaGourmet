@@ -1,35 +1,36 @@
 package org.puravidagourmet.api.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.sql.Date;
+import java.util.List;
 import lombok.Data;
 import lombok.ToString;
 import org.puravidagourmet.api.domain.enums.EstadoInventario;
-
-import java.sql.Date;
-import java.util.List;
 
 @Data
 @ToString
 public class InventarioPojo {
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long id;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private long id;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Date fecha_creacion;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Date fecha_creacion;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Date fecha_modificacion;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Date fecha_modificacion;
 
-    private String comentario;
+  private String comentario;
 
-    private DepartamentoPojo departamento;
+  private DepartamentoPojo departamento;
 
-    private UserPojo responsable;
+  private UsuarioPojo responsable;
 
-    private String periodoMeta;
+  private UsuarioPojo usuarioModifica;
 
-    private EstadoInventario estado;
+  private String periodoMeta;
 
-    private List<InventarioDetallePojo> detalle;
+  private EstadoInventario estado;
+
+  private List<InventarioDetallePojo> detalle;
 }

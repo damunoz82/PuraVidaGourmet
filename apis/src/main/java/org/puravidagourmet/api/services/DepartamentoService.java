@@ -5,21 +5,31 @@ import java.util.Optional;
 import org.puravidagourmet.api.db.repository.DepartamentoRepository;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Departamento;
-import org.puravidagourmet.api.domain.pojo.DepartamentoPojo;
 import org.puravidagourmet.api.exceptions.BadRequestException;
 import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DepartamentoService {
 
-  @Autowired private DepartamentoRepository departamentoRepository;
-  @Autowired private UsuarioRepository usuarioRepository;
+  private final DepartamentoRepository departamentoRepository;
+  private final UsuarioRepository usuarioRepository;
+
+  public DepartamentoService(
+      DepartamentoRepository departamentoRepository, UsuarioRepository usuarioRepository) {
+    this.departamentoRepository = departamentoRepository;
+    this.usuarioRepository = usuarioRepository;
+  }
 
   @Transactional
   public Departamento saveDepartamento(Departamento departamento) {
+    if (departamento.getId() <= 0) {
+      validateSave(departamento);
+    } else {
+      validateUpdate(departamento);
+    }
+
     departamento.setResponsable(
         usuarioRepository
             .findByEmail(departamento.getResponsable().getEmail())
@@ -39,19 +49,20 @@ public class DepartamentoService {
   }
 
   public void deleteById(long id) {
+    validateDelete(id);
     departamentoRepository.delete(id);
   }
 
-  public void validateSave(DepartamentoPojo departamento) {
+  private void validateSave(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 
     if (dbTipoProducto.isPresent()) {
-      throw new BadRequestException("Ya existe un tipo de producto con ese nombre");
+      throw new BadRequestException("Ya existe un departamento con ese nombre");
     }
   }
 
-  public void validateUpdate(DepartamentoPojo departamento) {
+  private void validateUpdate(Departamento departamento) {
     Optional<Departamento> dbTipoProducto =
         departamentoRepository.findByNombre(departamento.getNombre());
 
@@ -61,7 +72,7 @@ public class DepartamentoService {
     }
   }
 
-  public void validateDelete(long id) {
+  private void validateDelete(long id) {
     // fixme - finish
     // check if category is in use.
   }

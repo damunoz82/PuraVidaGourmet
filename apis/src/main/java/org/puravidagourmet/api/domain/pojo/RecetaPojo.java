@@ -3,11 +3,8 @@ package org.puravidagourmet.api.domain.pojo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.sql.Date;
 import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -60,10 +57,10 @@ public class RecetaPojo {
   @NotEmpty private String alergenos;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private UserPojo usuarioRegistra;
+  private UsuarioPojo usuarioRegistra;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private UserPojo usuarioModifica;
+  private UsuarioPojo usuarioModifica;
 
   @NotEmpty(message = "Lista de ingredientes no puede estar vacia")
   private List<IngredientePojo> ingredientes;

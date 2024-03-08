@@ -1,11 +1,8 @@
-package org.puravidagourmet.api.domain;
+package org.puravidagourmet.api.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
-import javax.validation.constraints.Email;
-
 import lombok.*;
-import org.puravidagourmet.api.domain.converters.StringListConverter;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
 
@@ -15,23 +12,21 @@ import org.puravidagourmet.api.domain.enums.RoleProvider;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class Usuario {
 
   private long id;
 
   private String name;
 
-  @Email
   private String email;
 
-  @JsonIgnore
-  private String password;
+  @JsonIgnore private String password;
 
   private AuthProvider provider;
 
   private String providerId;
 
-//  @Convert(converter = StringListConverter.class)
+  //  @Convert(converter = StringListConverter.class)
   private List<RoleProvider> roles;
 
   private boolean enabled = false;
