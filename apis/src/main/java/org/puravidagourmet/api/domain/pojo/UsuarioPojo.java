@@ -1,6 +1,6 @@
 package org.puravidagourmet.api.domain.pojo;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +16,9 @@ import lombok.ToString;
 @Builder
 public class UsuarioPojo {
 
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String name;
 
-  @NotNull private String email;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private String email;
 }

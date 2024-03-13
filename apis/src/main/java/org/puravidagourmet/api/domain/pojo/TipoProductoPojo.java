@@ -20,9 +20,9 @@ public class TipoProductoPojo {
   @Min(0)
   private long id;
 
-  @NotBlank(message = "Nombre de. Tipo de Producto no puede estar en blanco.")
+  @NotBlank(message = "{tipo.producto.nombre.notBlank}")
   private String nombre;
 
-  @NotBlank(message = "Ubicacion no puede estar en blanco.")
+  @NotBlank(message = "{tipo.producto.ubicacion.notBlank}")
   private String ubicacion;
 }

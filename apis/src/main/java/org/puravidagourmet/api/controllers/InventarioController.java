@@ -9,6 +9,7 @@ import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Inventario;
+import org.puravidagourmet.api.domain.enums.EstadoInventario;
 import org.puravidagourmet.api.domain.pojo.InventarioPojo;
 import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.InventarioMapper;
@@ -61,11 +62,35 @@ public class InventarioController extends BaseController {
     return ResponseEntity.created(createLocation(String.valueOf(inventario.getId()))).build();
   }
 
-  @PostMapping("/{id}/cancel")
+  @PutMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public ResponseEntity<String> actualizar(
+      @PathVariable long id,
+      @RequestBody InventarioPojo inventario,
+      @CurrentUser UserPrincipal userPrincipal) {
+    inventario.setId(id);
+
+    inventarioService.actualizar(mapper.toInventario(inventario), userPrincipal);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
+  }
+
+  @PostMapping("/{id}/terminado")
   @PreAuthorize(("hasRole ('ADMIN')"))
-  public ResponseEntity<String> cancel(
+  public ResponseEntity<String> terminar(
       @PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
-    inventarioService.cancel(id, userPrincipal);
+    inventarioService.cambiarEstado(id, userPrincipal, EstadoInventario.TERMINADO);
+
+    URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
+    return ResponseEntity.noContent().location(location).build();
+  }
+
+  @PostMapping("/{id}/abandonado")
+  @PreAuthorize(("hasRole ('ADMIN')"))
+  public ResponseEntity<String> abandonar(
+      @PathVariable long id, @CurrentUser UserPrincipal userPrincipal) {
+    inventarioService.cambiarEstado(id, userPrincipal, EstadoInventario.ABANDONADO);
 
     URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
     return ResponseEntity.noContent().location(location).build();

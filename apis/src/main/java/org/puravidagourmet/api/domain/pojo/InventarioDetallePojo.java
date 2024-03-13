@@ -1,6 +1,7 @@
 package org.puravidagourmet.api.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.ToString;
 import org.puravidagourmet.api.domain.enums.FormatoCompra;
@@ -10,7 +11,6 @@ import org.puravidagourmet.api.domain.enums.UnidadMedidas;
 @ToString
 public class InventarioDetallePojo {
 
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private long detalleId;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -34,7 +34,9 @@ public class InventarioDetallePojo {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private int precioCompraProducto;
 
-  private long cantidadEnBodega;
+  @Min(value = 0, message = "{inventario.detalle.cantidadEnBodega}")
+  private float cantidadEnBodega;
 
-  private long valor;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private float valor;
 }

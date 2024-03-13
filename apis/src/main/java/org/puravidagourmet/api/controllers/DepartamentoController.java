@@ -65,6 +65,7 @@ public class DepartamentoController extends BaseController {
 
     return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
   }
+  
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")

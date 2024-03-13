@@ -18,8 +18,8 @@ public class InventarioDetalle {
   private String ubicacionProducto;
   private FormatoCompra formatoCompraProducto;
   private UnidadMedidas unidadMedidaProducto;
-  private int cantidadUnidadProducto;
-  private int precioCompraProducto;
-  private long cantidadEnBodega;
-  private long valor;
+  private int cantidadUnidadProducto; // cantidad por unidad de producto.
+  private long precioCompraProducto;
+  private float cantidadEnBodega;
+  private float valor;
 }

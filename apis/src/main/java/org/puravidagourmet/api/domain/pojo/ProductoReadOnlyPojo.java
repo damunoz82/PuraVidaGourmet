@@ -1,6 +1,6 @@
 package org.puravidagourmet.api.domain.pojo;
 
-import jakarta.validation.constraints.Size;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +18,6 @@ public class ProductoReadOnlyPojo {
 
   private long id;
 
-  @Size(
-      min = 0,
-      max = 50,
-      message = "Nombre de la materia prima debe estar entre 0 y 50 caracteres.")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String nombre;
 }

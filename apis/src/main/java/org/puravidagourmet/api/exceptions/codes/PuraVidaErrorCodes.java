@@ -26,6 +26,7 @@ public enum PuraVidaErrorCodes {
 
   // Inventario
   INVENT_REC001(HttpStatus.NOT_FOUND, "inventario.not_found"),
+  INVENT_REC002(HttpStatus.BAD_REQUEST, "inventario.no.modificable"),
 
   // AUTH
   AUTH_REC001(HttpStatus.UNAUTHORIZED, "auth.unAuthorized"),

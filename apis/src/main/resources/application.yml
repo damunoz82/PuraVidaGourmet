@@ -14,8 +14,13 @@ logging:
 #    org.springframework.boot.autoconfigure: DEBUG
 
 spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
   liquibase:
-    enabled: true
+    enabled: false
   thymeleaf:
     cache: false
   jpa:
@@ -58,6 +63,14 @@ spring:
             userInfoUri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 
 app:
+  rabbitmq:
+    exchange: exchange
+    cocinaQueue: CocinaQueue
+    barQueue: BarQueue
+    compraQueue: CompraQueue
+    cocinaKey: cocina_key
+    barKey: bar_key
+    compraKey: compra_key
   auth:
     tokenSecret: 926D96C90030DD58429D2751AC1BDBBC
     tokenExpirationMsec: 36000000 # 1 hour = 3600000, 1 minuto = 60000
