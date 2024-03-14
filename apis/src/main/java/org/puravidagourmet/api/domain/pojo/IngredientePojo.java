@@ -19,7 +19,7 @@ public class IngredientePojo {
 
   private long ingredienteId;
 
-  @Min(0)
+  @Min(value = 0, message = "{ingrediente.cantidad}")
   private long cantidad;
 
   @NotNull private ProductoReadOnlyPojo producto;

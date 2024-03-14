@@ -4,7 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.CategoriaRecetaRepository;
 import org.puravidagourmet.api.domain.entity.CategoriaReceta;
-import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
+import org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,7 @@ public class CategoriaRecetaService {
         categoriaRecetaRepository.findByNombre(categoriaRecetaPojo.getNombre());
 
     if (dbTipoProducto.isPresent()) {
-      throw new BadRequestException("Ya existe una categoria de receta con ese nombre");
+      throw new PuraVidaExceptionHandler(PuraVidaErrorCodes.CAT_REC001);
     }
   }
 
@@ -54,8 +55,7 @@ public class CategoriaRecetaService {
         categoriaRecetaRepository.findByNombre(categoriaRecetaPojo.getNombre());
 
     if (dbTipoProducto.isPresent() && dbTipoProducto.get().getId() != categoriaRecetaPojo.getId()) {
-      throw new BadRequestException(
-          "Ya existe una categoria de receta con ese nombre - escoge otro nombre para actualizar");
+      throw new PuraVidaExceptionHandler(PuraVidaErrorCodes.CAT_REC001);
     }
   }
 

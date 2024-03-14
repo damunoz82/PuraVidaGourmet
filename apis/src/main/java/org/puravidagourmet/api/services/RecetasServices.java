@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.services;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.*;
+
 import com.google.common.base.Strings;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +14,7 @@ import org.puravidagourmet.api.domain.entity.Ingrediente;
 import org.puravidagourmet.api.domain.entity.Producto;
 import org.puravidagourmet.api.domain.entity.Receta;
 import org.puravidagourmet.api.domain.entity.Usuario;
-import org.puravidagourmet.api.exceptions.BadRequestException;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.utils.MathUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,7 @@ public class RecetasServices {
       // check exists.
       Optional<Receta> dbReceta = recetaRepository.findById(receta.getId());
       if (dbReceta.isEmpty()) {
-        throw new ResourceNotFoundException("Receta", "id", receta.getId());
+        throw new PuraVidaExceptionHandler(RECETA_REC003, receta.getId());
       }
 
       // set updating user
@@ -109,7 +110,7 @@ public class RecetasServices {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent()) {
-      throw new BadRequestException("Ya existe una receta con ese nombre");
+      throw new PuraVidaExceptionHandler(RECETA_REC001);
     }
 
     validateIngredientes(receta.getIngredientes());
@@ -119,8 +120,7 @@ public class RecetasServices {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent() && dbReceta.get().getId() != receta.getId()) {
-      throw new BadRequestException(
-          "Ya existe una receta con ese nombre - escoge otro nombre para actualizar");
+      throw new PuraVidaExceptionHandler(RECETA_REC001);
     }
 
     validateIngredientes(receta.getIngredientes());
@@ -136,8 +136,7 @@ public class RecetasServices {
         i -> {
           productoRepository
               .findById(i.getProducto().getId())
-              .orElseThrow(
-                  () -> new BadRequestException("Ingrediente con materia prima inexistente."));
+              .orElseThrow(() -> new PuraVidaExceptionHandler(RECETA_REC002));
         });
   }
 
@@ -151,11 +150,11 @@ public class RecetasServices {
                     i -> {
                       Producto producto =
                           productoRepository
-                              .findById(i.getProducto().getId())
-                              .orElseThrow(
-                                  () ->
-                                      new BadRequestException(
-                                          "Ingrediente con materia prima inexistente."));
+                              .findById(
+                                  i.getProducto()
+                                      .getId()) // fixme se esta haciendo dos llamadas a la DB en el
+                                                // mismo proceso, mejorar.
+                              .orElseThrow(() -> new PuraVidaExceptionHandler(RECETA_REC002));
 
                       return i.getCantidad() * producto.getCosteUnitario();
                     })

@@ -1,10 +1,10 @@
 package org.puravidagourmet.api.domain.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import java.sql.Date;
 import java.util.List;
-
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,39 +22,41 @@ public class RecetaPojo {
 
   private long id;
 
-  @NotBlank(message = "Nombre de la receta no puede estar en blanco")
+  @NotBlank(message = "{receta.nombre.notEmpty}")
   private String nombre;
 
-  @NotNull(message = "Categoria no puede ser nula")
-  private CategoriaRecetaPojo categoria;
+  @Valid private CategoriaRecetaPojo categoria;
 
-  @Min(0)
+  @Min(value = 0, message = "{receta.tamanio.porcion}")
   private long tamanioPorcion;
 
-  @Max(0)
+  @Min(value = 1, message = "{receta.numero.porciones}")
   private long numeroPorciones;
 
-  @Min(0)
+  @Min(value = 1, message = "{receta.temperatura.servido}")
   private long temperaturaDeServido;
 
-  @Min(0)
+  @Min(value = 1, message = "{receta.tiempo.preparacion}")
   private long tiempoPreparacion;
 
-  @Min(0)
+  @Min(value = 1, message = "{receta.tiempo.coccion}")
   private long tiempoCoccion;
 
-  @Min(0)
+  @Min(value = 1, message = "{receta.precio.venta}")
   private float precioDeVenta;
 
-  @Min(0)
-  @Max(1)
+  @Min(value = 1, message = "{receta.impuestos}")
+  @Max(value = 1, message = "{receta.impuestos}")
   private float impuestos;
 
-  @NotEmpty private String elaboracion;
+  @NotBlank(message = "{receta.elaboracion}")
+  private String elaboracion;
 
-  @NotEmpty private String equipoNecesario;
+  @NotBlank(message = "{receta.equipo.necesario}")
+  private String equipoNecesario;
 
-  @NotEmpty private String alergenos;
+  @NotBlank(message = "{receta.alergenos}")
+  private String alergenos;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private UsuarioPojo usuarioRegistra;
@@ -62,7 +64,7 @@ public class RecetaPojo {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private UsuarioPojo usuarioModifica;
 
-  @NotEmpty(message = "Lista de ingredientes no puede estar vacia")
+  @NotEmpty(message = "{receta.ingredientes}")
   private List<IngredientePojo> ingredientes;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)

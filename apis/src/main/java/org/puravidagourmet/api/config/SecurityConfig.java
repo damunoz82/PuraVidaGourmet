@@ -4,6 +4,7 @@ import static jakarta.servlet.DispatcherType.ERROR;
 import static jakarta.servlet.DispatcherType.FORWARD;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import java.util.Arrays;
 import org.puravidagourmet.api.config.security.RestAuthenticationEntryPoint;
 import org.puravidagourmet.api.config.security.TokenAuthenticationFilter;
 import org.puravidagourmet.api.config.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
@@ -26,6 +27,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -88,6 +90,20 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
     http.csrf(AbstractHttpConfigurer::disable)
+        .cors(
+            cors ->
+                cors.configurationSource(
+                    request -> {
+                      CorsConfiguration config = new CorsConfiguration();
+                      config.setAllowedOriginPatterns(Arrays.asList("*"));
+                      config.setAllowedMethods(
+                          Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
+                      config.setAllowedHeaders(Arrays.asList("*"));
+                      config.addExposedHeader("Location");
+                      config.setAllowCredentials(true);
+                      config.setMaxAge(3600L);
+                      return config;
+                    }))
         //        .cors(AbstractHttpConfigurer::disable)
         .exceptionHandling(e -> e.authenticationEntryPoint(new RestAuthenticationEntryPoint()))
         .authorizeHttpRequests(

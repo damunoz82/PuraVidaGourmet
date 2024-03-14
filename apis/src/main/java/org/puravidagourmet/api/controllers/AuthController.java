@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.USU_REC001;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +15,7 @@ import org.puravidagourmet.api.db.repository.UsuarioRepository;
 import org.puravidagourmet.api.domain.entity.Usuario;
 import org.puravidagourmet.api.domain.enums.AuthProvider;
 import org.puravidagourmet.api.domain.enums.RoleProvider;
-import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.payload.ApiResponse;
 import org.puravidagourmet.api.payload.AuthResponse;
 import org.puravidagourmet.api.payload.LoginRequest;
@@ -107,7 +109,7 @@ public class AuthController {
   @PostMapping("/signup")
   public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
     if (usuarioRepository.findByEmail(signUpRequest.getEmail()).isPresent()) {
-      throw new BadRequestException("Email address already in use.");
+      throw new PuraVidaExceptionHandler(USU_REC001);
     }
 
     // Creating user's account

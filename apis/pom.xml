@@ -16,8 +16,6 @@
     <description>Pura Vida Gourmet Api</description>
 
     <properties>
-        <!--    <maven.compiler.source>20</maven.compiler.source>-->
-        <!--    <maven.compiler.target>20</maven.compiler.target>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
     </properties>
@@ -81,6 +79,13 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
+
+        <!-- com.rabbitmq/amqp-client -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
 
         <!-- Swagger -->
         <dependency>

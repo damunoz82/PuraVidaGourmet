@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.TPROD_REC002;
+
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
@@ -8,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.puravidagourmet.api.domain.entity.TipoProducto;
 import org.puravidagourmet.api.domain.pojo.TipoProductoPojo;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.TipoProductoMapper;
 import org.puravidagourmet.api.services.TipoProductoService;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +52,7 @@ public class TipoProductoController extends BaseController {
   public TipoProductoPojo get(@PathVariable long id) {
     Optional<TipoProducto> result = tipoProductoService.getTipoProducto(id);
     return mapper.toTipoProductoPojo(
-        result.orElseThrow(() -> new ResourceNotFoundException("Tipo Producto", "id", id)));
+        result.orElseThrow(() -> new PuraVidaExceptionHandler(TPROD_REC002, id)));
   }
 
   @PostMapping
@@ -70,7 +72,7 @@ public class TipoProductoController extends BaseController {
 
     // check exists.
     if (tipoProductoService.getTipoProducto(id).isEmpty()) {
-      throw new ResourceNotFoundException("Tipo de Producto", "id", id);
+      throw new PuraVidaExceptionHandler(TPROD_REC002, id);
     }
 
     tipoProducto.setId(id);

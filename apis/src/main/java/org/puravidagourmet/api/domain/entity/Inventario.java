@@ -37,4 +37,6 @@ public class Inventario {
   private EstadoInventario estado;
 
   private List<InventarioDetalle> detalle;
+
+  private float totalValorEnBodega;
 }

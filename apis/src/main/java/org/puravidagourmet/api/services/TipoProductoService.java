@@ -1,10 +1,12 @@
 package org.puravidagourmet.api.services;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.TPROD_REC001;
+
 import java.util.List;
 import java.util.Optional;
 import org.puravidagourmet.api.db.repository.TipoProductoRepository;
 import org.puravidagourmet.api.domain.entity.TipoProducto;
-import org.puravidagourmet.api.exceptions.BadRequestException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +46,7 @@ public class TipoProductoService {
     Optional<TipoProducto> dbTipoProducto = tipoProductoRepository.findByNombre(receta.getNombre());
 
     if (dbTipoProducto.isPresent()) {
-      throw new BadRequestException("Ya existe un tipo de producto con ese nombre");
+      throw new PuraVidaExceptionHandler(TPROD_REC001);
     }
   }
 
@@ -52,8 +54,7 @@ public class TipoProductoService {
     Optional<TipoProducto> dbTipoProducto = tipoProductoRepository.findByNombre(receta.getNombre());
 
     if (dbTipoProducto.isPresent() && dbTipoProducto.get().getId() != receta.getId()) {
-      throw new BadRequestException(
-          "Ya existe un tipo de producto con ese nombre - escoge otro nombre para actualizar");
+      throw new PuraVidaExceptionHandler(TPROD_REC001);
     }
   }
 

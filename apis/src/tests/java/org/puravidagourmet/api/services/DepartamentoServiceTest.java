@@ -83,7 +83,7 @@ public class DepartamentoServiceTest {
 
     // then
     assertNotNull(exception);
-    assertTrue(exception.getMessage().contains("Usuario"));
+    assertTrue(exception.getMessage().contains("usuario.action"));
   }
 
   @Test
@@ -137,7 +137,7 @@ public class DepartamentoServiceTest {
     // then
     assertNull(result);
     assertNotNull(exception);
-    assertTrue(exception.getMessage().contains("Ya existe un departamento con ese nombre"));
+    assertTrue(exception.getMessage().contains("departamento.duplicado"));
   }
 
   @Test
@@ -189,7 +189,7 @@ public class DepartamentoServiceTest {
     // then
     assertNull(result);
     assertNotNull(exception);
-    assertTrue(exception.getMessage().contains("Ya existe un departamento con ese nombre"));
+    assertTrue(exception.getMessage().contains("departamento.duplicado"));
   }
 
   private Optional<Departamento> createOptionalDepartamento() {

@@ -1,5 +1,7 @@
 package org.puravidagourmet.api.controllers;
 
+import static org.puravidagourmet.api.exceptions.codes.PuraVidaErrorCodes.RECETA_REC003;
+
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.Comparator;
@@ -10,7 +12,7 @@ import org.puravidagourmet.api.config.security.CurrentUser;
 import org.puravidagourmet.api.config.security.UserPrincipal;
 import org.puravidagourmet.api.domain.entity.Receta;
 import org.puravidagourmet.api.domain.pojo.RecetaPojo;
-import org.puravidagourmet.api.exceptions.ResourceNotFoundException;
+import org.puravidagourmet.api.exceptions.PuraVidaExceptionHandler;
 import org.puravidagourmet.api.mappers.RecetaMapper;
 import org.puravidagourmet.api.services.RecetasServices;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +55,7 @@ public class RecetaController extends BaseController {
   public RecetaPojo get(@PathVariable long id) {
     Optional<Receta> result = recetasServices.get(id);
     return mapper.toRecetaPojo(
-        result.orElseThrow(() -> new ResourceNotFoundException("Receta", "id", id)));
+        result.orElseThrow(() -> new PuraVidaExceptionHandler(RECETA_REC003, id)));
   }
 
   @PostMapping

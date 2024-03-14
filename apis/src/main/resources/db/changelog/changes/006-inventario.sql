@@ -7,7 +7,7 @@ drop procedure iniciarInventario(departamento_id int,
                                     comentario varchar(250),
                                     estado int,
                                     inventario_id INOUT bigint
-                                    ;
+                                    );
 
 create or replace procedure iniciarInventario(departamento_id bigint,
    responsable_id bigint,
