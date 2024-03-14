@@ -12,12 +12,16 @@ create table inventario (
 	comentario varchar(250) not null default '',
 	departamento_id int not null,
 	responsable_id int not NULL,
+	usuario_modifica_id int,
 	periodo_meta varchar(30) not null,
 	estado int,
 	primary key (id),
 	constraint fk_inventario_responsable
 		foreign key (responsable_id)
 			references usuario(id),
+    constraint fk_inventario_usu_modifica
+    		foreign key (usuario_modifica_id)
+    			references usuario(id),
 	constraint fk_inventario_departamento
 		foreign key (departamento_id)
 			references departamento(id)

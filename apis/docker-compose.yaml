@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: puravida
       POSTGRES_DB: puraVida
     ports:
-      - "5433:5432"
+      - "5432:5432"
   rabbitmq:
     image: 'rabbitmq:3.13-management-alpine'
     ports:

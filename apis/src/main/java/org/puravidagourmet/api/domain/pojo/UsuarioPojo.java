@@ -19,6 +19,6 @@ public class UsuarioPojo {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String name;
 
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  //  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private String email;
 }

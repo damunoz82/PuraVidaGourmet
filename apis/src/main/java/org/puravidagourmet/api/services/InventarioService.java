@@ -77,6 +77,8 @@ public class InventarioService {
             .findByEmail(userPrincipal.getName())
             .orElseThrow(() -> new PuraVidaExceptionHandler(USU_REC003)));
     inventario.setEstado(estado);
+
+    // fixme - validar que se pueda cambiar estado.
     inventarioRepository.cancel(inventario);
   }
 

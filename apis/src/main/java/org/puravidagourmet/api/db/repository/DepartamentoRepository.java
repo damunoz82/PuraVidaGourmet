@@ -25,7 +25,7 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
       "insert into departamento (nombre, responsable_id) values" + "(?, ?)";
 
   private final String UPDATE_DEPARTAMENTO =
-      "update departamento set nombre=?, responsable)id=? where id=?";
+      "update departamento set nombre=?, responsable_id=? where id=?";
 
   private final String DELETE = "delete from departamento where id = ?";
 
