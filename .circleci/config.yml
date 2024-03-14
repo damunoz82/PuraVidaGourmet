@@ -27,7 +27,7 @@ parameters:
   dockerImageVersion:
     description: version of the docker image
     type: string
-    default: "1.1"
+    default: "1.2"
 
 jobs:
   buildAndDeploy:
