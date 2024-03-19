@@ -39,13 +39,13 @@ public class RecetaPojo {
   @Min(value = 1, message = "{receta.tiempo.preparacion}")
   private long tiempoPreparacion;
 
-  @Min(value = 1, message = "{receta.tiempo.coccion}")
+  @Min(value = 0, message = "{receta.tiempo.coccion}")
   private long tiempoCoccion;
 
   @Min(value = 1, message = "{receta.precio.venta}")
   private float precioDeVenta;
 
-  @Min(value = 1, message = "{receta.impuestos}")
+  @Min(value = 0, message = "{receta.impuestos}")
   @Max(value = 1, message = "{receta.impuestos}")
   private float impuestos;
 

@@ -3,6 +3,7 @@ package org.puravidagourmet.api.db.repository;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Objects;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -38,6 +39,6 @@ public abstract class BaseRepository<T> {
   protected abstract void prepareStatement(PreparedStatement ps, T obj) throws SQLException;
 
   public long getKey(KeyHolder keyHolder) {
-    return (long) keyHolder.getKeys().get("id");
+    return (long) Objects.requireNonNull(keyHolder.getKeys()).get("id");
   }
 }

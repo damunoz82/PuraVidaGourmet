@@ -40,8 +40,8 @@ public class InventarioRepository extends BaseRepository<Inventario> {
                 .build();
         return Inventario.builder()
             .id(rs.getLong("id"))
-            .fecha_creacion(rs.getDate("fecha_creacion"))
-            .fecha_modificacion(rs.getDate("fecha_modificacion"))
+            .fechaCreacion(rs.getTimestamp("fecha_creacion"))
+            .fechaModificacion(rs.getTimestamp("fecha_modificacion"))
             .comentario(rs.getString("comentario"))
             .departamento(departamento)
             .responsable(responsable)

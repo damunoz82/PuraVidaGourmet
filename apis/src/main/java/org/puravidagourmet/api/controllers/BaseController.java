@@ -3,7 +3,7 @@ package org.puravidagourmet.api.controllers;
 import java.net.URI;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-public class BaseController {
+public abstract class BaseController {
 
   protected URI createLocation(String id) {
     return ServletUriComponentsBuilder.fromCurrentRequest()

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/orden-compra", produces = "application/json")
 public class OrdenCompra extends BaseController {
 
+  /** THIS IS A TEST CLASS. */
   @Autowired private RabbitMQService rabbitMQService;
 
   @Autowired private RecetasServices recetasServices;

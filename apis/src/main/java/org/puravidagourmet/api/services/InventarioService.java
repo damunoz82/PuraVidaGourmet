@@ -107,6 +107,5 @@ public class InventarioService {
         dbInventario.getDetalle().stream()
             .map(InventarioDetalle::getValor)
             .reduce((float) 0f, Float::sum));
-    // fixme finish me.
   }
 }

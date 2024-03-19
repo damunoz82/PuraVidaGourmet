@@ -1,6 +1,6 @@
 package org.puravidagourmet.api.domain.entity;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,9 +20,9 @@ public class Inventario {
 
   private long id;
 
-  private Date fecha_creacion;
+  private Timestamp fechaCreacion;
 
-  private Date fecha_modificacion;
+  private Timestamp fechaModificacion;
 
   private String comentario;
 

@@ -31,6 +31,14 @@ public enum PuraVidaErrorCodes {
   // AUTH
   AUTH_REC001(HttpStatus.UNAUTHORIZED, "auth.unAuthorized"),
 
+  // MENU
+  MENU_REC001(HttpStatus.NOT_FOUND, "menu.not_found"),
+  MENU_REC002(HttpStatus.BAD_REQUEST, "menu.duplicado"),
+
+  // ITEM MENU
+  ITEM_REC001(HttpStatus.NOT_FOUND, "item.menu.not_found"),
+  ITEM_REC002(HttpStatus.BAD_REQUEST, "item.menu.duplicado"),
+
   // USUARIOS
   USU_REC001(HttpStatus.BAD_REQUEST, "usuario.email.duplicado"),
   USU_REC002(HttpStatus.BAD_REQUEST, "usuario.disable.self"),

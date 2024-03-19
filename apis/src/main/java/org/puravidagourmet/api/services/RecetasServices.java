@@ -50,7 +50,7 @@ public class RecetasServices {
     // if updating
     if (receta.getId() > 0) {
       // validate update
-      validateUpdate(receta);
+      validateNombreUpdate(receta);
 
       // check exists.
       Optional<Receta> dbReceta = recetaRepository.findById(receta.getId());
@@ -69,7 +69,7 @@ public class RecetasServices {
       // is creating
 
       // validate create
-      validateSave(receta);
+      validateNombreSave(receta);
 
       // set creating user
       receta.setUsuarioRegistra(
@@ -106,24 +106,20 @@ public class RecetasServices {
     recetaRepository.delete(id);
   }
 
-  private void validateSave(Receta receta) {
+  private void validateNombreSave(Receta receta) {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent()) {
       throw new PuraVidaExceptionHandler(RECETA_REC001);
     }
-
-    validateIngredientes(receta.getIngredientes());
   }
 
-  private void validateUpdate(Receta receta) {
+  private void validateNombreUpdate(Receta receta) {
     Optional<Receta> dbReceta = recetaRepository.findByNombre(receta.getNombre());
 
     if (dbReceta.isPresent() && dbReceta.get().getId() != receta.getId()) {
       throw new PuraVidaExceptionHandler(RECETA_REC001);
     }
-
-    validateIngredientes(receta.getIngredientes());
   }
 
   private void validateDelete(long id) {
@@ -150,10 +146,7 @@ public class RecetasServices {
                     i -> {
                       Producto producto =
                           productoRepository
-                              .findById(
-                                  i.getProducto()
-                                      .getId()) // fixme se esta haciendo dos llamadas a la DB en el
-                                                // mismo proceso, mejorar.
+                              .findById(i.getProducto().getId())
                               .orElseThrow(() -> new PuraVidaExceptionHandler(RECETA_REC002));
 
                       return i.getCantidad() * producto.getCosteUnitario();

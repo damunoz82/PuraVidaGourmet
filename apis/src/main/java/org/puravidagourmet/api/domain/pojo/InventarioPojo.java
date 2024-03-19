@@ -3,7 +3,7 @@ package org.puravidagourmet.api.domain.pojo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import lombok.Data;
 import lombok.ToString;
@@ -17,10 +17,10 @@ public class InventarioPojo {
   private long id;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Date fecha_creacion;
+  private Timestamp fechaCreacion;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  private Date fecha_modificacion;
+  private Timestamp fechaModificacion;
 
   @NotBlank(message = "{inventario.comentario.notBlank}")
   private String comentario;
