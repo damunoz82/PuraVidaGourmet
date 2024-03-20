@@ -26,7 +26,7 @@ public class CocinaSockerConnector {
     stompClient.connect(url, cocinaStompSessionHandler);
   }
 
-  public void sendMessage(Receta receta) {
-    cocinaStompSessionHandler.sendMessage(receta);
-  }
+  //  public void sendMessage(Receta receta) {
+  //    cocinaStompSessionHandler.sendMessage(receta);
+  //  }
 }
