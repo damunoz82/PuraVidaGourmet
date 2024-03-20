@@ -29,7 +29,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(path = "/departamento", produces = "application/json")
 public class DepartamentoController extends BaseController {
 
-  //  private static final Logger LOGGER = LoggerFactory.getLogger(DepartamentoController.class);
   private final DepartamentoService departamentoService;
 
   private final DepartamentoMapper mapper;
@@ -65,7 +64,6 @@ public class DepartamentoController extends BaseController {
 
     return ResponseEntity.created(createLocation(String.valueOf(result.getId()))).build();
   }
-  
 
   @PutMapping("/{id}")
   @PreAuthorize("hasRole('ADMIN')")

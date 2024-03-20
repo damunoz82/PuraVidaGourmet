@@ -39,6 +39,10 @@ public enum PuraVidaErrorCodes {
   ITEM_REC001(HttpStatus.NOT_FOUND, "item.menu.not_found"),
   ITEM_REC002(HttpStatus.BAD_REQUEST, "item.menu.duplicado"),
 
+  // Mesa
+  MESA_REC001(HttpStatus.BAD_REQUEST, "mesa.duplicado"),
+  MESA_RECC002(HttpStatus.NOT_FOUND, "mesa.not_found"),
+
   // USUARIOS
   USU_REC001(HttpStatus.BAD_REQUEST, "usuario.email.duplicado"),
   USU_REC002(HttpStatus.BAD_REQUEST, "usuario.disable.self"),

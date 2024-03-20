@@ -16,9 +16,10 @@ public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
   private static final RowMapper<CategoriaReceta> rowMapper =
       (rs, rowNum) ->
           CategoriaReceta.builder().id(rs.getInt("id")).nombre(rs.getString("nombre")).build();
-  private final String FIND_ALL = "select id, nombre from categoria_receta";
-  private final String FIND_BY_NOMBRE = FIND_ALL + " where nombre = ?";
-  private final String FIND_BY_ID = FIND_ALL + " where id = ?";
+  private final String FIND_ALL = "select id, nombre from categoria_receta ";
+  private final String FIND_BY_NOMBRE = FIND_ALL + "where nombre = ?";
+  private final String FIND_BY_ID = FIND_ALL + "where id = ?";
+  private final String SORT = "order by nombre";
   private final String CREATE_RECETA_CATEGORIA = "insert into categoria_receta (nombre) values (?)";
   private final String UPDATE_RECETA_CATEGORIA = "update categoria_receta set nombre=? where id=?";
   private final String DELETE = "delete from categoria_receta where id = ?";
@@ -28,7 +29,7 @@ public class CategoriaRecetaRepository extends BaseRepository<CategoriaReceta> {
   }
 
   public List<CategoriaReceta> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<CategoriaReceta> findByNombre(String nombre) {

@@ -13,11 +13,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TipoProductoRepository extends BaseRepository<TipoProducto> {
 
-  private final String FIND_ALL = "select id, nombre, ubicacion from tipo_producto";
+  private final String FIND_ALL = "select id, nombre, ubicacion from tipo_producto ";
 
-  private final String FIND_BY_NOMBRE = FIND_ALL + " where nombre = ?";
+  private final String FIND_BY_NOMBRE = FIND_ALL + "where nombre = ?";
 
-  private final String FIND_BY_ID = FIND_ALL + " where id = ?";
+  private final String FIND_BY_ID = FIND_ALL + "where id = ?";
+
+  private final String SORT = "order by nombre";
 
   private final String CREATE_RECETA_CATEGORIA =
       "insert into tipo_producto (nombre, ubicacion) values" + "(?, ?)";
@@ -46,7 +48,7 @@ public class TipoProductoRepository extends BaseRepository<TipoProducto> {
   }
 
   public List<TipoProducto> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<TipoProducto> findByNombre(String nombre) {

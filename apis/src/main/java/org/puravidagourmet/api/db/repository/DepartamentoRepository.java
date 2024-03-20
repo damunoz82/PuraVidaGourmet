@@ -15,18 +15,14 @@ import org.springframework.stereotype.Repository;
 public class DepartamentoRepository extends BaseRepository<Departamento> {
 
   private final String FIND_ALL =
-      "select d.id, d.nombre, d.responsable_id, u.name, u.email  from departamento d join usuario u on d.responsable_id = u.id";
-
-  private final String FIND_BY_ID = FIND_ALL + " where d.id = ?";
-
-  private final String FIND_BY_NOMBRE = FIND_ALL + " where nombre = ?";
-
+      "select d.id, d.nombre, d.responsable_id, u.name, u.email  from departamento d join usuario u on d.responsable_id = u.id ";
+  private final String FIND_BY_ID = FIND_ALL + "where d.id = ?";
+  private final String FIND_BY_NOMBRE = FIND_ALL + "where nombre = ?";
+  private final String SORT = "order by d.nombre";
   private final String CREATE_DEPARTAMENTO =
       "insert into departamento (nombre, responsable_id) values" + "(?, ?)";
-
   private final String UPDATE_DEPARTAMENTO =
       "update departamento set nombre=?, responsable_id=? where id=?";
-
   private final String DELETE = "delete from departamento where id = ?";
 
   private final RowMapper<Departamento> rowMapper =
@@ -55,7 +51,7 @@ public class DepartamentoRepository extends BaseRepository<Departamento> {
   }
 
   public List<Departamento> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<Departamento> findById(long id) {

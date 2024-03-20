@@ -32,9 +32,10 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
                       .collect(Collectors.toList()))
               .build();
   private final String FIND_ALL =
-      "select id, email, enabled, name, password, provider, provider_id, roles from usuario";
-  private final String FIND_BY_EMAIL = FIND_ALL + " where email = ?";
-  private final String FIND_BY_ID = FIND_ALL + " where id = ?";
+      "select id, email, enabled, name, password, provider, provider_id, roles from usuario ";
+  private final String FIND_BY_EMAIL = FIND_ALL + "where email = ?";
+  private final String FIND_BY_ID = FIND_ALL + "where id = ?";
+  private final String SORT = "order by name";
   private final String CREATE_USER =
       "insert into usuario (email, enabled, name, password, provider, provider_id, roles) values"
           + "(?, ?, ?, ?, ?, ?, ?)";
@@ -57,7 +58,7 @@ public class UsuarioRepository extends BaseRepository<Usuario> {
   }
 
   public List<Usuario> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<Usuario> findByEmail(String email) {

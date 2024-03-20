@@ -24,9 +24,8 @@ public class MenuRepository extends BaseRepository<Menu> {
           + "m.usu_modifica, u2.name as umName, u2.email as umEmail,  m.fecha_modifica, m.estado  from menu m "
           + "join usuario u on m.usu_registra = u.id "
           + "left join usuario u2 on m.usu_modifica = u2.id ";
-
   private final String FIND_BY_NAME = FIND_ALL + "where m.nombre=?";
-
+  private final String SORT = "order by m.nombre";
   private final String FIND_BY_ID =
       "select m.id, m.nombre, m.temporada, m.descripcion, m.usu_registra, u.name as urName, u.email as urEmail, m.fecha_registro, "
           + "m.usu_modifica, u2.name as umName, u2.email as umEmail,  m.fecha_modifica, m.estado, "
@@ -43,11 +42,12 @@ public class MenuRepository extends BaseRepository<Menu> {
   private final String UPDATE_MENU =
       "update menu set nombre=?, temporada=?, descripcion=?, usu_modifica=?, fecha_modifica=current_timestamp, estado=? where id=?";
 
-  private final String DELETE_RECETA = "delete from receta where id=?";
+  //  private final String DELETE_RECETA = "delete from receta where id=?";
 
   // ITEM MENU
   private final String FIND_ALL_ITEM_MENU =
       "select im.item_menu_id, im.receta_id, im.nombre_comercial, im.descripcion, im.precio_venta from item_menu im ";
+  private final String IM_SORT = "order by im.nombre_comercial";
   private final String FIND_ITEM_MENU_BY_ID = FIND_ALL_ITEM_MENU + "where im.item_menu_id=?";
   private final String FIND_ITEM_MENU_BY_NOMBRE =
       FIND_ALL_ITEM_MENU + "where im.nombre_comercial=?";
@@ -197,11 +197,11 @@ public class MenuRepository extends BaseRepository<Menu> {
   }
 
   public List<Menu> findAll() {
-    return template.query(FIND_ALL, menuRowMapper);
+    return template.query(FIND_ALL + SORT, menuRowMapper);
   }
 
   public List<ItemMenu> findAllItemMenu() {
-    return template.query(FIND_ALL_ITEM_MENU, itemMenuRowMapper);
+    return template.query(FIND_ALL_ITEM_MENU + IM_SORT, itemMenuRowMapper);
   }
 
   public Optional<Menu> findByNombre(String nombre) {

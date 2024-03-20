@@ -21,11 +21,9 @@ public class ProductoRepository extends BaseRepository<Producto> {
           + "p.precio_de_compra, p.proveedor, p.unidad_medida , p.tipo_producto_id, tp.nombre as nombreTipoProducto, "
           + "tp.ubicacion  from producto p "
           + "join tipo_producto tp on p.tipo_producto_id = tp.id ";
-
   private final String FIND_BY_NOMBRE = FIND_ALL + " where p.nombre = ?";
-
   private final String FIND_BY_ID = FIND_ALL + " where p.id = ?";
-
+  private final String SORT = "order by p.nombre";
   private final String CREATE_RECETA_CATEGORIA =
       "insert into producto (cantidad_por_unidad, coste_unitario, formato_compra, nombre, porcentaje_merma, "
           + "precio_de_compra, proveedor, unidad_medida, tipo_producto_id) "
@@ -77,7 +75,7 @@ public class ProductoRepository extends BaseRepository<Producto> {
   }
 
   public List<Producto> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<Producto> findByNombre(String nombre) {

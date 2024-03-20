@@ -22,13 +22,13 @@ public class RecetaRepository extends BaseRepository<Receta> {
           + "r.categoria_receta_id, cr.nombre as nombreCategoria, r.usuario_modifica_id, up.name as modifica_name, up.email as modifica_email, r.usuario_registra_id, ur.name as registra_name, ur.email as registra_email  from recetas r "
           + "join categoria_receta cr on r.categoria_receta_id = cr.id "
           + "join usuario ur on r.usuario_registra_id = ur.id "
-          + "left join usuario up on r.usuario_modifica_id  = up.id";
+          + "left join usuario up on r.usuario_modifica_id  = up.id ";
+  private final String SORT = "order by r.nombre";
+  private final String FIND_BY_NOMBRE = FIND_ALL + "where r.nombre = ?";
 
-  private final String FIND_BY_NOMBRE = FIND_ALL + " where r.nombre = ?";
+  private final String FIND_BY_ID = FIND_ALL + "where r.id = ?";
 
-  private final String FIND_BY_ID = FIND_ALL + " where r.id = ?";
-
-  private final String FIND_BY_CATEGORIA = FIND_ALL + " where cr.nombre = ?";
+  private final String FIND_BY_CATEGORIA = FIND_ALL + "where cr.nombre = ?";
 
   private final String CREATE_RECETA =
       "insert into recetas (alergenos, costo_porcion, costo_receta, elaboracion, equipo_necesario, fecha_modificacion, "
@@ -116,7 +116,7 @@ public class RecetaRepository extends BaseRepository<Receta> {
   }
 
   public List<Receta> findAll() {
-    return template.query(FIND_ALL, rowMapper);
+    return template.query(FIND_ALL + SORT, rowMapper);
   }
 
   public Optional<Receta> findByNombre(String nombre) {
