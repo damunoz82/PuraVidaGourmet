@@ -16,10 +16,14 @@ executors:
     working_directory: /workspace
 
 parameters:
-  dockerImageNameApi:
-    description: Name of the Api image
+  dockerImageNameAdmin:
+    description: Name of the Admin image
     type: string
-    default: "pvgourmet/pura-vida-gourmet-api"
+    default: "pvgourmet/pura-vida-gourmet-admin"
+  dockerImageNameRestaurante:
+    description: Name of the Restaurante image
+    type: string
+    default: "pvgourmet/pura-vida-gourmet-restaurante"
   dockerImageNameEngine:
     description: Name of the Engine image
     type: string
@@ -45,8 +49,11 @@ jobs:
             equal: [ master, <<pipeline.git.branch>> ]
           steps:
             - run:
-                name: Build Docker Api Image
-                command: docker build -t <<pipeline.parameters.dockerImageNameApi>>:<<pipeline.parameters.dockerImageVersion>> apis/.
+                name: Build Docker Admin Image
+                command: docker build -t <<pipeline.parameters.dockerImageNameAdmin>>:<<pipeline.parameters.dockerImageVersion>> admin/.
+            - run:
+                name: Build Docker Restaurante Image
+                command: docker build -t <<pipeline.parameters.dockerImageNameRestaurante>>:<<pipeline.parameters.dockerImageVersion>> engines/.
             - run:
                 name: Build Docker Engine Image
                 command: docker build -t <<pipeline.parameters.dockerImageNameEngine>>:<<pipeline.parameters.dockerImageVersion>> engines/.
@@ -54,8 +61,11 @@ jobs:
                 name: Login
                 command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
             - run:
-                name: Push Api Image
-                command: docker push <<pipeline.parameters.dockerImageNameApi>>:<<pipeline.parameters.dockerImageVersion>>
+                name: Push Admin Image
+                command: docker push <<pipeline.parameters.dockerImageNameAdmin>>:<<pipeline.parameters.dockerImageVersion>>
+            - run:
+                name: Push Restaurante Image
+                command: docker push <<pipeline.parameters.dockerImageNameRestaurante>>:<<pipeline.parameters.dockerImageVersion>>
             - run:
                 name: Push Engine Image
                 command: docker push <<pipeline.parameters.dockerImageNameEngine>>:<<pipeline.parameters.dockerImageVersion>>

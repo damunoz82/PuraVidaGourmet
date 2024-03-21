@@ -7,7 +7,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>org.puravidagourmet</groupId>
@@ -19,7 +19,8 @@
 
     <modules>
         <module>engines</module>
-        <module>apis</module>
+        <module>admin</module>
+        <module>restaurante</module>
     </modules>
 
     <repositories>

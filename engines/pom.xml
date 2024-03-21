@@ -31,7 +31,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-        
+
         <!-- com.rabbitmq/amqp-client -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,7 +57,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>org.puravidagourmet.engine.Main</mainClass>
+                    <mainClass>org.puravidagourmet.engine.Application</mainClass>
                 </configuration>
             </plugin>
         </plugins>
