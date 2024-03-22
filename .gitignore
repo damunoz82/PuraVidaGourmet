@@ -32,3 +32,5 @@ HELP.md
 .mvn/wrapper/MavenWrapperDownloader.java
 /apis/target/
 /engines/target/
+/admin/target/
+/restaurante/target/
