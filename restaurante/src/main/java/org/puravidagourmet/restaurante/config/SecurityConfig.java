@@ -98,8 +98,8 @@ public class SecurityConfig {
                       "/oauth2/**",
                       "/actuator/health",
                       "/swagger-ui.html",
-                      "/ordenes-socket",
-                      "/ordenes-socket/**",
+                      "/restaurante-socket",
+                      "/restaurante-socket/**",
                       "/webjars/**",
                       "/v3/**",
                       "/swagger-resources/**")

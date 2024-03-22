@@ -1,4 +1,4 @@
-package org.puravidagourmet.admin.domain.entity;
+package org.puravidagourmet.restaurante.domain.entity;
 
 import lombok.*;
 
@@ -15,5 +15,5 @@ public class ItemMenu {
   private String nombreComercial;
   private String descripcion;
   private float precioVenta;
-  private Departamento destino;
+  private String destino;
 }

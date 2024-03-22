@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset Daniel munoz:dmunoz.hon@gmail.com splitStatements:true endDelimite
 
 -- create tables for menu
 CREATE TABLE public.item_menu (

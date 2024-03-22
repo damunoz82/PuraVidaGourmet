@@ -1,10 +1,13 @@
-package org.puravidagourmet.admin.db.repository;
+package org.puravidagourmet.restaurante.db.repository;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-import org.puravidagourmet.admin.domain.entity.*;
+import org.puravidagourmet.restaurante.domain.entity.ItemMenu;
+import org.puravidagourmet.restaurante.domain.entity.Menu;
+import org.puravidagourmet.restaurante.domain.entity.SeccionMenu;
+import org.puravidagourmet.restaurante.domain.entity.Usuario;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -43,16 +46,16 @@ public class MenuRepository extends BaseRepository<Menu> {
 
   // ITEM MENU
   private final String FIND_ALL_ITEM_MENU =
-      "select im.item_menu_id, im.receta_id, im.nombre_comercial, im.descripcion, im.precio_venta, im.dep_responsable from item_menu im ";
+      "select im.item_menu_id, im.receta_id, im.nombre_comercial, im.descripcion, im.precio_venta from item_menu im ";
   private final String IM_SORT = "order by im.nombre_comercial";
   private final String FIND_ITEM_MENU_BY_ID = FIND_ALL_ITEM_MENU + "where im.item_menu_id=?";
   private final String FIND_ITEM_MENU_BY_NOMBRE =
       FIND_ALL_ITEM_MENU + "where im.nombre_comercial=?";
 
   private final String INSERT_ITEM_MENU =
-      "insert into item_menu (receta_id, nombre_comercial, descripcion, precio_venta, dep_responsable) values (?, ?, ?, ?, ?)";
+      "insert into item_menu (receta_id, nombre_comercial, descripcion, precio_venta) values (?, ?, ?, ?)";
   private final String UPDATE_ITEM_MENU =
-      "update item_menu set receta_id=?, nombre_comercial=?, descripcion=?, precio_venta=?, dep_responsable=? where item_menu_id=?";
+      "update item_menu set receta_id=?, nombre_comercial=?, descripcion=?, precio_venta=? where item_menu_id=?";
   private final String DELETE_ITEM_MENU = "delete from item_menu where item_menu_id=?";
 
   // SECCION
@@ -74,7 +77,6 @@ public class MenuRepository extends BaseRepository<Menu> {
             .nombreComercial(rs.getString("nombre_comercial"))
             .descripcion(rs.getString("descripcion"))
             .precioVenta(rs.getFloat("precio_venta"))
-            .destino(Departamento.builder().id(rs.getLong("dep_responsable")).build())
             .build();
       };
 
@@ -320,7 +322,6 @@ public class MenuRepository extends BaseRepository<Menu> {
             ps.setString(2, itemMenu.getNombreComercial());
             ps.setString(3, itemMenu.getDescripcion());
             ps.setFloat(4, itemMenu.getPrecioVenta());
-            ps.setLong(5, itemMenu.getDestino().getId());
             return ps;
           },
           keyHolder);
@@ -334,7 +335,6 @@ public class MenuRepository extends BaseRepository<Menu> {
           itemMenu.getNombreComercial(),
           itemMenu.getDescripcion(),
           itemMenu.getPrecioVenta(),
-          itemMenu.getDestino().getId(),
           itemMenu.getItemMenuId());
     }
 

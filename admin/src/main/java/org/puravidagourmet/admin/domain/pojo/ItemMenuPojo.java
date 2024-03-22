@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.puravidagourmet.admin.domain.entity.Departamento;
 
 @Data
 @ToString
@@ -26,4 +27,6 @@ public class ItemMenuPojo {
 
   @Min(value = 0, message = "{menu.item.precio}")
   private float precioVenta;
+
+  private Departamento destino;
 }

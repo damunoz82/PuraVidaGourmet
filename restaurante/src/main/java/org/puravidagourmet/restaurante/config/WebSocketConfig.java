@@ -12,12 +12,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry registry) {
-    registry.enableSimpleBroker("/cocina-topic");
+    registry.enableSimpleBroker("/restaurante-topic");
     registry.setApplicationDestinationPrefixes("/app");
   }
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry.addEndpoint("/ordenes-socket").setAllowedOriginPatterns("*").withSockJS();
+    registry.addEndpoint("/restaurante-socket").setAllowedOriginPatterns("*").withSockJS();
   }
 }

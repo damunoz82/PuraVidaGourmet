@@ -1,3 +1,5 @@
+--liquibase formatted sql
+--changeset Daniel munoz:dmunoz.hon@gmail.com splitStatements:true endDelimite
 
 
 CREATE TABLE public.mesas_restaurante (
