@@ -16,9 +16,9 @@ public class LoggingAspect {
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingAspect.class);
 
   @Pointcut(
-      "within(org.puravidagourmet.api.controllers.*)"
-          + " || within(org.puravidagourmet.api.services.*)"
-          + " || within(org.puravidagourmet.api.db.repository.*)")
+      "within(org.puravidagourmet.admin.controllers.*)"
+          + " || within(org.puravidagourmet.admin.services.*)"
+          + " || within(org.puravidagourmet.admin.db.repository.*)")
   public void loggingPointcut() {}
 
   @Before(value = "loggingPointcut()")
